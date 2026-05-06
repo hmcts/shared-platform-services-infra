@@ -1,0 +1,124 @@
+name: shared-platform-services-infra
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+pr:
+  - main
+  
+resources:
+  repositories:
+    - repository: cnp-azuredevops-libraries
+      type: github
+      ref: refs/heads/master
+      name: hmcts/cnp-azuredevops-libraries
+      endpoint: "hmcts"
+
+parameters:
+  - name: overrideAction
+    type: string
+    default: plan
+    values:
+      - plan
+      - apply
+      - destroy
+  - name: envs
+    type: object
+    default:
+      - name: dev
+        service_connection: "DTS-HERITAGE-INTSVC-DEV"
+        depends_on_precheck: true
+      - name: sit
+        service_connection: "DTS-HERITAGE-INTSVC-SIT"
+        depends_on_precheck: false
+
+  - name: environment_components
+    type: object
+    default:
+      - deployment: 'core_infra'
+      - deployment: 'load_balancing'
+      - deployment: 'virtual_machines'
+
+variables:
+  - name: timeoutInMinutes
+    value: 60
+  - name: agentImage
+    value: ubuntu-latest
+  - name: product
+    value: sps-platform
+  - name: terraformInitSubscription
+    value: 04d27a32-7a07-48b3-95b8-3c8691e1a263
+  - template: vars/input-variables.yaml@cnp-azuredevops-libraries
+
+stages:
+  - stage: Precheck
+    jobs:
+      - job:
+        pool:
+          vmImage: ${{ variables.agentImage }}
+        steps:
+          - template: steps/terraform-precheck.yaml@cnp-azuredevops-libraries
+            parameters:
+              keyvaultName: "infra-vault-nonprod"
+              keyvaultSecret: "azure-devops-sp-token"
+              serviceConnection: "azurerm-sandbox"
+              overrideAction: ${{ parameters.overrideAction }}
+  - ${{ each deployment in parameters.environment_components }}:
+    - ${{ each env in parameters.envs }}:
+      - ${{ if not(and(eq(env.name, 'sit'), eq(deployment.deployment, 'virtual_machines'))) }}:
+        - stage: ${{ env.name }}_${{ deployment.deployment }}
+          dependsOn:
+            - ${{ if eq(env.name, 'dev') }}:
+              - Precheck
+            - ${{ if eq(env.name, 'sit') }}:
+              - dev_${{ deployment.deployment }}
+          jobs:
+            - job: TerraformPlanApply
+              pool:
+                vmImage: ${{ variables.agentImage }}
+              timeoutInMinutes: ${{ variables.timeoutInMinutes }}
+              steps:
+                - ${{ if eq(deployment.deployment, 'virtual_machines') }}:
+                  - task: AzureCLI@2
+                    displayName: 'Get core-infra outputs'
+                    inputs:
+                      azureSubscription: ${{ env.service_connection }}
+                      scriptType: bash
+                      scriptLocation: inlineScript
+                      inlineScript: |
+                        RG_NAME="caps-rg-${{ env.name }}"
+                        VNET_NAME="caps-caps-vnet-${{ env.name }}"
+
+                        WEB_SUBNET_ID=$(az network vnet subnet list \
+                          --resource-group "$RG_NAME" \
+                          --vnet-name "$VNET_NAME" \
+                          --query "[?contains(name, 'web')].id" -o tsv)
+
+                        APP_SUBNET_ID=$(az network vnet subnet list \
+                          --resource-group "$RG_NAME" \
+                          --vnet-name "$VNET_NAME" \
+                          --query "[?contains(name, 'app')].id" -o tsv)
+
+                        DATA_SUBNET_ID=$(az network vnet subnet list \
+                          --resource-group "$RG_NAME" \
+                          --vnet-name "$VNET_NAME" \
+                          --query "[?contains(name, 'data')].id" -o tsv)
+
+                        echo "##vso[task.setvariable variable=resource_group_name]$RG_NAME"
+                        echo "##vso[task.setvariable variable=web_subnet_id]$WEB_SUBNET_ID"
+                        echo "##vso[task.setvariable variable=app_subnet_id]$APP_SUBNET_ID"
+                        echo "##vso[task.setvariable variable=data_subnet_id]$DATA_SUBNET_ID"
+                - template: steps/terraform.yaml@cnp-azuredevops-libraries
+                  parameters:
+                    overrideAction: ${{ parameters.overrideAction }}
+                    environment: ${{ env.name }}
+                    component: ${{ replace(deployment.deployment, '_', '-') }}
+                    serviceConnection: ${{ env.service_connection }}
+                    terraformInitSubscription: ${{ variables.terraformInitSubscription }}
+                    product: ${{ variables.product }}
+                    ${{ if eq(deployment.deployment, 'virtual_machines') }}:
+                      planCommandOptions: "-compact-warnings -var resource_group_name=$(resource_group_name) -var web_subnet_id=$(web_subnet_id) -var app_subnet_id=$(app_subnet_id) -var data_subnet_id=$(data_subnet_id)"
+                    ${{ else }}:
+                      planCommandOptions: "-compact-warnings"
