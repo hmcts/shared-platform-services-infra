@@ -18,3 +18,9 @@ provider "azurerm" {
   features {}
   subscription_id = var.networking.hub.subscription_id
 }
+
+provider "azurerm" {
+  alias = "vpn"
+  features {}
+  subscription_id = var.networking.vpn.subscription_id
+}

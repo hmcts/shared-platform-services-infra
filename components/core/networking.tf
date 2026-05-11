@@ -112,3 +112,25 @@ module "vnet_peer_hub" {
     azurerm.target    = azurerm.hub
   }
 }
+
+module "vnet_peer_vpn" {
+  source = "github.com/hmcts/terraform-module-vnet-peering?ref=master"
+  peerings = {
+    source = {
+      name           = "${module.networking.vnet_names["vnet"]}-vnet-${var.env}-to-vpn"
+      vnet_id        = "/subscriptions/${data.azurerm_subscription.current.subscription_id}/resourceGroups/${module.networking.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${module.networking.vnet_names["vnet"]}"
+      vnet           = module.networking.vnet_names["vnet"]
+      resource_group = module.networking.resource_group_name
+    }
+    target = {
+      name           = "vpn-to-${module.networking.vnet_names["vnet"]}-vnet-${var.env}"
+      vnet           = var.networking.vpn.vnet_name
+      resource_group = var.networking.vpn.resource_group_name
+    }
+  }
+
+  providers = {
+    azurerm.initiator = azurerm
+    azurerm.target    = azurerm.vpn
+  }
+}
