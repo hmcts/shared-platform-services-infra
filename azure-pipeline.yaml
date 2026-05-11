@@ -141,6 +141,6 @@ stages:
                       set -euo pipefail
                       COMPONENT_DIR="$(Build.SourcesDirectory)/shared-platform-services-infra/components/${{ deployment.deployment }}"
                       for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
-                        VALUE=$(terraform -chdir="$COMPONENT_DIR" output -raw "$OUTPUT_NAME")
+                        VALUE=$(terraform -chdir="$COMPONENT_DIR" output -json "$OUTPUT_NAME" | jq -cr '.')
                         echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
                       done
