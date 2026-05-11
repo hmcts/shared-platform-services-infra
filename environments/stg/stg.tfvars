@@ -1,3 +1,5 @@
+env = "aat"
+
 networking = {
   hub = {
     next_hop_ip         = "10.11.8.36"
