@@ -45,7 +45,7 @@ module "networking" {
         default = {
           address_prefix         = "0.0.0.0/0"
           next_hop_type          = "VirtualAppliance"
-          next_hop_in_ip_address = var.networking.next_hop_ip
+          next_hop_in_ip_address = var.networking.hub.next_hop_ip
         }
       }
     }
@@ -55,17 +55,17 @@ module "networking" {
         RFC_1918_A = {
           address_prefix         = "10.0.0.0/8"
           next_hop_type          = "VirtualAppliance"
-          next_hop_in_ip_address = var.networking.next_hop_ip
+          next_hop_in_ip_address = var.networking.hub.next_hop_ip
         }
         RFC_1918_B = {
           address_prefix         = "172.16.0.0/12"
           next_hop_type          = "VirtualAppliance"
-          next_hop_in_ip_address = var.networking.next_hop_ip
+          next_hop_in_ip_address = var.networking.hub.next_hop_ip
         }
         RFC_1918_C = {
           address_prefix         = "192.168.0.0/16"
           next_hop_type          = "VirtualAppliance"
-          next_hop_in_ip_address = var.networking.next_hop_ip
+          next_hop_in_ip_address = var.networking.hub.next_hop_ip
         }
       }
     }
