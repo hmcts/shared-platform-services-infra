@@ -15,8 +15,8 @@ variable "networking" {
     }))
     vpn = optional(object({
       subscription_id     = optional(string, "ed302caf-ec27-4c64-a05e-85731c3ce90e")
-      vnet_name           = optional(string, "mgmt-vpn-2-mgmt")
-      resource_group_name = optional(string, "mgmt-vpn-2-vnet")
+      vnet_name           = optional(string, "mgmt-vpn-2-vnet")
+      resource_group_name = optional(string, "mgmt-vpn-2-mgmt")
     }))
   })
   description = "Networking configuration for the virtual network."
