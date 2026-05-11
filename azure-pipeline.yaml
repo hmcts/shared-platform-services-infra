@@ -32,10 +32,10 @@ parameters:
         service_connection: "DTS-SPS-SBOX"
         depends_on: Precheck
       - name: dev
-        service_connection: "DTS-SPS-DEV"
+        service_connection: "DTS-SPS-PREVIEW"
         depends_on: Precheck
       - name: test
-        service_connection: "DTS-SPS-TEST"
+        service_connection: "DTS-SPS-PERFTEST"
         depends_on: dev
       - name: ithc
         service_connection: "DTS-SPS-ITHC"
