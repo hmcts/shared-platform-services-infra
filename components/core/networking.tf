@@ -4,7 +4,7 @@ locals {
 }
 
 module "networking" {
-  source = "git@github.com:hmcts/terraform-module-azure-virtual-networking?ref=4.x"
+  source = "github.com/hmcts/terraform-module-azure-virtual-networking?ref=4.x"
 
   env         = var.env
   product     = var.product
