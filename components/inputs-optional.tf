@@ -22,5 +22,6 @@ variable "networking" {
   description = "Networking configuration for the virtual network."
   default = {
     hub = {}
+    vpn = {}
   }
 }
