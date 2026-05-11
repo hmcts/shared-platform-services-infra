@@ -1,6 +1,7 @@
 locals {
   sps-infra-supernet    = "10.180.0.0/16"
-  env-specific-supernet = cidrsubnet(local.sps-infra-supernet, 6, index(["sbox", "dev", "test", "ithc", "demo", "stg", "prod"], var.env))
+  env                   = var.env == "preview" ? "dev" : var.env == "perftest" ? "test" : var.env == "aat" ? "stg" : var.env
+  env-specific-supernet = cidrsubnet(local.sps-infra-supernet, 6, index(["sbox", "dev", "test", "ithc", "demo", "stg", "prod"], local.env))
 }
 
 module "networking" {
