@@ -7,7 +7,7 @@ trigger:
 
 pr:
   - main
-  
+
 resources:
   repositories:
     - repository: cnp-azuredevops-libraries
@@ -24,22 +24,47 @@ parameters:
       - plan
       - apply
       - destroy
+
   - name: envs
     type: object
     default:
+      - name: sbox
+        service_connection: "DTS-SPS-SBOX"
+        depends_on: Precheck
       - name: dev
-        service_connection: "DTS-HERITAGE-INTSVC-DEV"
-        depends_on_precheck: true
-      - name: sit
-        service_connection: "DTS-HERITAGE-INTSVC-SIT"
-        depends_on_precheck: false
+        service_connection: "DTS-SPS-DEV"
+        depends_on: Precheck
+      - name: test
+        service_connection: "DTS-SPS-TEST"
+        depends_on: dev
+      - name: ithc
+        service_connection: "DTS-SPS-ITHC"
+        depends_on: test
+      - name: demo
+        service_connection: "DTS-SPS-DEMO"
+        depends_on: ithc
+      - name: stg
+        service_connection: "DTS-SPS-STG"
+        depends_on: demo
+      - name: prod
+        service_connection: "DTS-SPS-PROD"
+        depends_on: stg
 
   - name: environment_components
     type: object
     default:
-      - deployment: 'core_infra'
-      - deployment: 'load_balancing'
-      - deployment: 'virtual_machines'
+      - deployment: 'core'
+        required_outputs:
+          - resource_group
+          - vnet_id
+          - subnet_ids
+      # To add a component that consumes outputs from a prior component:
+      #
+      # - deployment: 'app_gateway'
+      #   depends_on: 'core'              # ensures core is deployed first in the same env
+      #   required_inputs:                # names of outputs from depends_on to consume; set as TF_VAR_ env vars
+      #     - resource_group_name         # → TF_VAR_resource_group_name
+      #     - subnet_id_app_gateway       # → TF_VAR_subnet_id_app_gateway
 
 variables:
   - name: timeoutInMinutes
@@ -55,7 +80,7 @@ variables:
 stages:
   - stage: Precheck
     jobs:
-      - job:
+      - job: Validate
         pool:
           vmImage: ${{ variables.agentImage }}
         steps:
@@ -65,60 +90,57 @@ stages:
               keyvaultSecret: "azure-devops-sp-token"
               serviceConnection: "azurerm-sandbox"
               overrideAction: ${{ parameters.overrideAction }}
-  - ${{ each deployment in parameters.environment_components }}:
-    - ${{ each env in parameters.envs }}:
-      - ${{ if not(and(eq(env.name, 'sit'), eq(deployment.deployment, 'virtual_machines'))) }}:
-        - stage: ${{ env.name }}_${{ deployment.deployment }}
-          dependsOn:
-            - ${{ if eq(env.name, 'dev') }}:
-              - Precheck
-            - ${{ if eq(env.name, 'sit') }}:
-              - dev_${{ deployment.deployment }}
-          jobs:
-            - job: TerraformPlanApply
-              pool:
-                vmImage: ${{ variables.agentImage }}
-              timeoutInMinutes: ${{ variables.timeoutInMinutes }}
-              steps:
-                - ${{ if eq(deployment.deployment, 'virtual_machines') }}:
-                  - task: AzureCLI@2
-                    displayName: 'Get core-infra outputs'
-                    inputs:
-                      azureSubscription: ${{ env.service_connection }}
-                      scriptType: bash
-                      scriptLocation: inlineScript
-                      inlineScript: |
-                        RG_NAME="caps-rg-${{ env.name }}"
-                        VNET_NAME="caps-caps-vnet-${{ env.name }}"
 
-                        WEB_SUBNET_ID=$(az network vnet subnet list \
-                          --resource-group "$RG_NAME" \
-                          --vnet-name "$VNET_NAME" \
-                          --query "[?contains(name, 'web')].id" -o tsv)
-
-                        APP_SUBNET_ID=$(az network vnet subnet list \
-                          --resource-group "$RG_NAME" \
-                          --vnet-name "$VNET_NAME" \
-                          --query "[?contains(name, 'app')].id" -o tsv)
-
-                        DATA_SUBNET_ID=$(az network vnet subnet list \
-                          --resource-group "$RG_NAME" \
-                          --vnet-name "$VNET_NAME" \
-                          --query "[?contains(name, 'data')].id" -o tsv)
-
-                        echo "##vso[task.setvariable variable=resource_group_name]$RG_NAME"
-                        echo "##vso[task.setvariable variable=web_subnet_id]$WEB_SUBNET_ID"
-                        echo "##vso[task.setvariable variable=app_subnet_id]$APP_SUBNET_ID"
-                        echo "##vso[task.setvariable variable=data_subnet_id]$DATA_SUBNET_ID"
-                - template: steps/terraform.yaml@cnp-azuredevops-libraries
-                  parameters:
-                    overrideAction: ${{ parameters.overrideAction }}
-                    environment: ${{ env.name }}
-                    component: ${{ replace(deployment.deployment, '_', '-') }}
-                    serviceConnection: ${{ env.service_connection }}
-                    terraformInitSubscription: ${{ variables.terraformInitSubscription }}
-                    product: ${{ variables.product }}
-                    ${{ if eq(deployment.deployment, 'virtual_machines') }}:
-                      planCommandOptions: "-compact-warnings -var resource_group_name=$(resource_group_name) -var web_subnet_id=$(web_subnet_id) -var app_subnet_id=$(app_subnet_id) -var data_subnet_id=$(data_subnet_id)"
-                    ${{ else }}:
-                      planCommandOptions: "-compact-warnings"
+  - ${{ each env in parameters.envs }}:
+    - ${{ each deployment in parameters.environment_components }}:
+      - stage: ${{ env.name }}_${{ deployment.deployment }}
+        dependsOn:
+          # Component dependency — prerequisite component in the same environment
+          - ${{ if deployment.depends_on }}:
+            - ${{ env.name }}_${{ deployment.depends_on }}
+          # Environment dependency — same component in the prerequisite environment
+          - ${{ if eq(env.depends_on, 'Precheck') }}:
+            - Precheck
+          - ${{ if ne(env.depends_on, 'Precheck') }}:
+            - ${{ env.depends_on }}_${{ deployment.deployment }}
+        jobs:
+          - job: TerraformPlanApply
+            pool:
+              vmImage: ${{ variables.agentImage }}
+            timeoutInMinutes: ${{ variables.timeoutInMinutes }}
+            # When a component consumes outputs from a dependency, map cross-stage
+            # output variables into this job as TF_VAR_ environment variables so
+            # terraform automatically picks them up without explicit -var flags.
+            ${{ if deployment.required_inputs }}:
+              variables:
+                ${{ each input in deployment.required_inputs }}:
+                  TF_VAR_${{ input }}: $[ stageDependencies.${{ env.name }}_${{ deployment.depends_on }}.TerraformPlanApply.outputs['CaptureOutputs.${{ input }}'] ]
+            steps:
+              - template: steps/terraform.yaml@cnp-azuredevops-libraries
+                parameters:
+                  overrideAction: ${{ parameters.overrideAction }}
+                  environment: ${{ env.name }}
+                  component: ${{ deployment.deployment }}
+                  serviceConnection: ${{ env.service_connection }}
+                  terraformInitSubscription: ${{ variables.terraformInitSubscription }}
+                  product: ${{ variables.product }}
+                  planCommandOptions: "-compact-warnings"
+              # After terraform completes, capture specified outputs and publish
+              # them as ADO output variables for downstream stages to consume
+              # via stageDependencies.
+              - ${{ if deployment.required_outputs }}:
+                - task: AzureCLI@2
+                  name: CaptureOutputs
+                  displayName: 'Publish terraform outputs'
+                  inputs:
+                    azureSubscription: ${{ env.service_connection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    addSpnToEnvironment: true
+                    inlineScript: |
+                      set -euo pipefail
+                      COMPONENT_DIR="$(Build.SourcesDirectory)/components/${{ deployment.deployment }}"
+                      for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
+                        VALUE=$(terraform -chdir="$COMPONENT_DIR" output -raw "$OUTPUT_NAME")
+                        echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
+                      done
