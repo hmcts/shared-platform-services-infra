@@ -5,4 +5,5 @@ networking = {
     vnet_name           = "hmcts-hub-sbox-int"
     resource_group_name = "hmcts-hub-sbox-int"
   }
+  vpn = {}
 }
