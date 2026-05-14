@@ -31,9 +31,9 @@ parameters:
       - name: sbox
         service_connection: "DTS-SPS-SBOX"
         depends_on: Precheck
-      #- name: dev
-      #  service_connection: "DTS-SPS-PREVIEW"
-      #  depends_on: sbox
+      - name: dev
+        service_connection: "DTS-SPS-PREVIEW"
+        depends_on: sbox
       #- name: test
       #  service_connection: "DTS-SPS-PERFTEST"
       #  depends_on: dev
