@@ -111,8 +111,6 @@ module "vnet_peer_hub" {
     azurerm.initiator = azurerm
     azurerm.target    = azurerm.hub
   }
-
-  depends_on = [module.networking]
 }
 
 module "vnet_peer_vpn" {
@@ -135,6 +133,4 @@ module "vnet_peer_vpn" {
     azurerm.initiator = azurerm
     azurerm.target    = azurerm.vpn
   }
-
-  depends_on = [module.networking]
 }
