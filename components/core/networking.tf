@@ -117,6 +117,7 @@ module "vnet_peer_hub" {
 
 module "vnet_peer_vpn" {
   source = "github.com/hmcts/terraform-module-vnet-peering?ref=master"
+  count  = var.env == "perftest" ? 0 : 1
   peerings = {
     source = {
       name           = "${module.networking.vnet_names["vnet"]}-vnet-${var.env}-to-vpn"
