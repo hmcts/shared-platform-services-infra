@@ -111,10 +111,13 @@ module "vnet_peer_hub" {
     azurerm.initiator = azurerm
     azurerm.target    = azurerm.hub
   }
+
+  depends_on = [module.networking]
 }
 
 module "vnet_peer_vpn" {
   source = "github.com/hmcts/terraform-module-vnet-peering?ref=master"
+  count  = var.env == "perftest" ? 0 : 1
   peerings = {
     source = {
       name           = "${module.networking.vnet_names["vnet"]}-vnet-${var.env}-to-vpn"
@@ -133,4 +136,6 @@ module "vnet_peer_vpn" {
     azurerm.initiator = azurerm
     azurerm.target    = azurerm.vpn
   }
+
+  depends_on = [module.networking]
 }
