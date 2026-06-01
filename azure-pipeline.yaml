@@ -58,6 +58,10 @@ parameters:
           - resource_group
           - vnet_id
           - subnet_ids
+      - deployment: "apim_appgw"
+        environment: "sbox"
+        dependsOn: "Precheck"
+        pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
       #
       # - deployment: 'app_gateway'
