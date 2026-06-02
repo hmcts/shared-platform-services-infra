@@ -26,6 +26,10 @@ variable "networking" {
   }
 }
 
+# Declared to satisfy the shared tfvars file; not used directly in components
+variable "destinations" { default = {} }
+variable "frontends" { default = {} }
+
 variable "traffic_manager_endpoints" { default = {} }
 variable "traffic_manager_profiles" { default = {} }
 variable "shutter_rg" { default = "" }
