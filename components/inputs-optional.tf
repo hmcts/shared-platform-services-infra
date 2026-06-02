@@ -29,6 +29,7 @@ variable "networking" {
 # Declared to satisfy the shared tfvars file; not used directly in components
 variable "destinations" { default = {} }
 variable "frontends" { default = {} }
+variable "private_ip_address" { default = "" }
 
 variable "traffic_manager_endpoints" { default = {} }
 variable "traffic_manager_profiles" { default = {} }
