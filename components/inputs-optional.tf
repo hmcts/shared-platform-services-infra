@@ -41,7 +41,7 @@ variable "hub" { default = "sbox" }
 variable "ssl_policy" { default = null }
 
 variable "key_vault_subscription" {
-  default = []
+  default = null
 }
 
 variable "hub_app_gw_private_ip_address" {
