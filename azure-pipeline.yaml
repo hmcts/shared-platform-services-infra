@@ -99,53 +99,53 @@ stages:
     - ${{ each deployment in parameters.environment_components }}:
       - ${{ if or(not(deployment.environment), eq(env.name, deployment.environment)) }}:
         - stage: ${{ env.name }}_${{ deployment.deployment }}
-        dependsOn:
-          # Component dependency — prerequisite component in the same environment
-          - ${{ if deployment.depends_on }}:
-            - ${{ env.name }}_${{ deployment.depends_on }}
-          # Environment dependency — same component in the prerequisite environment
-          - ${{ if eq(env.depends_on, 'Precheck') }}:
-            - Precheck
-          - ${{ if ne(env.depends_on, 'Precheck') }}:
-            - ${{ env.depends_on }}_${{ deployment.deployment }}
-        jobs:
-          - job: TerraformPlanApply
-            pool:
-              vmImage: ${{ variables.agentImage }}
-            timeoutInMinutes: ${{ variables.timeoutInMinutes }}
-            # When a component consumes outputs from a dependency, map cross-stage
-            # output variables into this job as TF_VAR_ environment variables so
-            # terraform automatically picks them up without explicit -var flags.
-            ${{ if deployment.required_inputs }}:
-              variables:
-                ${{ each input in deployment.required_inputs }}:
-                  TF_VAR_${{ input }}: $[ stageDependencies.${{ env.name }}_${{ deployment.depends_on }}.TerraformPlanApply.outputs['CaptureOutputs.${{ input }}'] ]
-            steps:
-              - template: steps/terraform.yaml@cnp-azuredevops-libraries
-                parameters:
-                  overrideAction: ${{ parameters.overrideAction }}
-                  environment: ${{ env.name }}
-                  component: ${{ deployment.deployment }}
-                  serviceConnection: ${{ env.service_connection }}
-                  terraformInitSubscription: ${{ variables.terraformInitSubscription }}
-                  product: ${{ variables.product }}
-                  planCommandOptions: "-compact-warnings"
-              # After terraform completes, capture specified outputs and publish
-              # them as ADO output variables for downstream stages to consume
-              # via stageDependencies.
-              - ${{ if deployment.required_outputs }}:
-                - task: AzureCLI@2
-                  name: CaptureOutputs
-                  displayName: 'Publish terraform outputs'
-                  inputs:
-                    azureSubscription: ${{ env.service_connection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    addSpnToEnvironment: true
-                    inlineScript: |
-                      set -euo pipefail
-                      COMPONENT_DIR="$(Build.SourcesDirectory)/shared-platform-services-infra/components/${{ deployment.deployment }}"
-                      for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
-                        VALUE=$(terraform -chdir="$COMPONENT_DIR" output -json "$OUTPUT_NAME" | jq -cr '.')
-                        echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
-                      done
+          dependsOn:
+            # Component dependency — prerequisite component in the same environment
+            - ${{ if deployment.depends_on }}:
+              - ${{ env.name }}_${{ deployment.depends_on }}
+            # Environment dependency — same component in the prerequisite environment
+            - ${{ if eq(env.depends_on, 'Precheck') }}:
+              - Precheck
+            - ${{ if ne(env.depends_on, 'Precheck') }}:
+              - ${{ env.depends_on }}_${{ deployment.deployment }}
+          jobs:
+            - job: TerraformPlanApply
+              pool:
+                vmImage: ${{ variables.agentImage }}
+              timeoutInMinutes: ${{ variables.timeoutInMinutes }}
+              # When a component consumes outputs from a dependency, map cross-stage
+              # output variables into this job as TF_VAR_ environment variables so
+              # terraform automatically picks them up without explicit -var flags.
+              ${{ if deployment.required_inputs }}:
+                variables:
+                  ${{ each input in deployment.required_inputs }}:
+                    TF_VAR_${{ input }}: $[ stageDependencies.${{ env.name }}_${{ deployment.depends_on }}.TerraformPlanApply.outputs['CaptureOutputs.${{ input }}'] ]
+              steps:
+                - template: steps/terraform.yaml@cnp-azuredevops-libraries
+                  parameters:
+                    overrideAction: ${{ parameters.overrideAction }}
+                    environment: ${{ env.name }}
+                    component: ${{ deployment.deployment }}
+                    serviceConnection: ${{ env.service_connection }}
+                    terraformInitSubscription: ${{ variables.terraformInitSubscription }}
+                    product: ${{ variables.product }}
+                    planCommandOptions: "-compact-warnings"
+                # After terraform completes, capture specified outputs and publish
+                # them as ADO output variables for downstream stages to consume
+                # via stageDependencies.
+                - ${{ if deployment.required_outputs }}:
+                  - task: AzureCLI@2
+                    name: CaptureOutputs
+                    displayName: 'Publish terraform outputs'
+                    inputs:
+                      azureSubscription: ${{ env.service_connection }}
+                      scriptType: bash
+                      scriptLocation: inlineScript
+                      addSpnToEnvironment: true
+                      inlineScript: |
+                        set -euo pipefail
+                        COMPONENT_DIR="$(Build.SourcesDirectory)/shared-platform-services-infra/components/${{ deployment.deployment }}"
+                        for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
+                          VALUE=$(terraform -chdir="$COMPONENT_DIR" output -json "$OUTPUT_NAME" | jq -cr '.')
+                          echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
+                        done
