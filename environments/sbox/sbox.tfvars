@@ -15,7 +15,7 @@ ssl_policy = {
   policy_name          = "AppGwSslPolicy20220101S"
   min_protocol_version = "TLSv1_2"
 }
-ssl_certificate = "wildcard-sandbox-platform-hmcts-net"
+ssl_certificate = "wildcard-sandbox-api-hmcts-net"
 
 hub_app_gw_private_ip_address = ["10.180.1.10"]
 apim_appgw_backend_pool_fqdns = ["firewall-sbox-int-palo-spsapimgmt.uksouth.cloudapp.azure.com"]
