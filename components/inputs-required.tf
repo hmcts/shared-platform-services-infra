@@ -10,7 +10,6 @@ variable "product" {
   type = string
 }
 
-variable "oms_env" {}
 variable "project" {}
 variable "subscription" {}
 variable "vnet_name" {}
