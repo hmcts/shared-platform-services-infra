@@ -12,6 +12,3 @@ variable "product" {
 
 variable "project" {}
 variable "subscription" {}
-variable "vnet_name" {}
-variable "vnet_rg" {}
-variable "ssl_certificate" {}

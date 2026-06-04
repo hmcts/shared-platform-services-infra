@@ -2,8 +2,6 @@ project            = "spshmcts"
 location           = "uksouth"
 env                = "sbox"
 subscription       = "sbox"
-vnet_rg            = "rg-sps-platform-sbox"
-vnet_name          = "sps-platform-networking-vnet-sbox"
 cdn_sku            = "Standard_Verizon"
 sku_tier           = "Free"
 sku_size           = "Free"
@@ -14,7 +12,6 @@ ssl_policy = {
   policy_name          = "AppGwSslPolicy20220101S"
   min_protocol_version = "TLSv1_2"
 }
-ssl_certificate = "wildcard-sandbox-api-hmcts-net"
 
 hub_app_gw_private_ip_address = ["10.180.1.10"]
 apim_appgw_backend_pool_fqdns = ["firewall-sbox-int-palo-spsapimgmt.uksouth.cloudapp.azure.com"]
