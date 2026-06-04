@@ -97,7 +97,8 @@ stages:
 
   - ${{ each env in parameters.envs }}:
     - ${{ each deployment in parameters.environment_components }}:
-      - stage: ${{ env.name }}_${{ deployment.deployment }}
+      - ${{ if or(not(deployment.environment), eq(env.name, deployment.environment)) }}:
+        - stage: ${{ env.name }}_${{ deployment.deployment }}
         dependsOn:
           # Component dependency — prerequisite component in the same environment
           - ${{ if deployment.depends_on }}:
