@@ -1,3 +1,3 @@
 project      = "spshmcts"
-env          = "perftest"
+env          = "test"
 subscription = "perftest"

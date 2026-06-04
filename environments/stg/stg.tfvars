@@ -1,5 +1,5 @@
 project      = "spshmcts"
-env          = "aat"
+env          = "stg"
 subscription = "aat"
 
 networking = {
