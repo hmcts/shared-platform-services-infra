@@ -21,6 +21,8 @@ locals {
 
 module "app-gw" {
 
+  count = var.env == "sbox" ? 1 : 0
+
   providers = {
     azurerm     = azurerm
     azurerm.hub = azurerm.hub
