@@ -9,3 +9,6 @@ variable "builtFrom" {
 variable "product" {
   type = string
 }
+
+variable "project" {}
+variable "subscription" {}

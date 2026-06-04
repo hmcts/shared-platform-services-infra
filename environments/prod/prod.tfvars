@@ -1,5 +1,7 @@
 
-env = "prod"
+project      = "spshmcts"
+env          = "prod"
+subscription = "prod"
 networking = {
   hub = {
     next_hop_ip         = "10.11.8.36"

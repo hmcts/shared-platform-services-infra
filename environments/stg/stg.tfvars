@@ -1,4 +1,6 @@
-env = "aat"
+project      = "spshmcts"
+env          = "stg"
+subscription = "aat"
 
 networking = {
   hub = {

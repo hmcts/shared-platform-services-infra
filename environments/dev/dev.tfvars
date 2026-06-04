@@ -1,1 +1,3 @@
-env = "preview"
+project      = "spshmcts"
+env          = "dev"
+subscription = "preview"
