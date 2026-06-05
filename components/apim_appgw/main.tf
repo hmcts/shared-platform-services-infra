@@ -25,7 +25,10 @@ module "app-gw" {
 
   providers = {
     azurerm     = azurerm
-    azurerm.hub = azurerm.hub
+    # The App Gateway, VNet and subnet all live in the SPS subscription
+    # (created by the core component), so point the module's hub-aliased
+    # provider at the default SPS provider rather than the HMCTS hub.
+    azurerm.hub = azurerm
     azurerm.kv  = azurerm.kv
   }
 
