@@ -3,7 +3,7 @@ locals {
 
   vnet_rg     = (var.env == "dev") ? "rg-sps-platform-preview" : (var.env == "test") ? "rg-sps-platform-perftest" : (var.env == "stg") ? "rg-sps-platform-aat" : "rg-sps-platform-${var.env}"
   vnet_name   = (var.env == "dev") ? "sps-platform-networking-vnet-preview" : (var.env == "test") ? "rsps-platform-networking-vnet-perftest" : (var.env == "stg") ? "sps-platform-networking-vnet-aat" : "sps-platform-networking-vnet-${var.env}"
-  subnet_name = "vnet-app-gateway"
+  subnet_name = "sps-platform-networking-app-gateway-sbox"
   hub_env     = (var.env == "demo" || var.env == "dev" || var.env == "ithc" || var.env == "test") ? "nonprod" : (var.env == "stg") ? "prod" : var.env
 
   key_vault_resource_group = "sps-platform-${var.subscription}-rg"
