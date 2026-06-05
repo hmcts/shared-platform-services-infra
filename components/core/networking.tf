@@ -7,7 +7,7 @@ locals {
 module "networking" {
   source = "github.com/hmcts/terraform-module-azure-virtual-networking?ref=4.x"
 
-  env         = var.env
+  env         = local.naming_env
   product     = var.product
   common_tags = module.ctags.common_tags
   component   = "networking"
@@ -95,13 +95,13 @@ module "vnet_peer_hub" {
   source = "github.com/hmcts/terraform-module-vnet-peering?ref=master"
   peerings = {
     source = {
-      name           = "${module.networking.vnet_names["vnet"]}-vnet-${var.env}-to-hub"
+      name           = "${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}-to-hub"
       vnet_id        = "/subscriptions/${data.azurerm_subscription.current.subscription_id}/resourceGroups/${module.networking.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${module.networking.vnet_names["vnet"]}"
       vnet           = module.networking.vnet_names["vnet"]
       resource_group = module.networking.resource_group_name
     }
     target = {
-      name           = "hub-to-${module.networking.vnet_names["vnet"]}-vnet-${var.env}"
+      name           = "hub-to-${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}"
       vnet           = var.networking.hub.vnet_name
       resource_group = var.networking.hub.resource_group_name
     }
@@ -127,16 +127,16 @@ moved {
 
 module "vnet_peer_vpn" {
   source = "github.com/hmcts/terraform-module-vnet-peering?ref=master"
-  count  = var.env == "perftest" ? 0 : 1
+  count  = local.naming_env == "perftest" ? 0 : 1
   peerings = {
     source = {
-      name           = "${module.networking.vnet_names["vnet"]}-vnet-${var.env}-to-vpn"
+      name           = "${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}-to-vpn"
       vnet_id        = "/subscriptions/${data.azurerm_subscription.current.subscription_id}/resourceGroups/${module.networking.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${module.networking.vnet_names["vnet"]}"
       vnet           = module.networking.vnet_names["vnet"]
       resource_group = module.networking.resource_group_name
     }
     target = {
-      name           = "vpn-to-${module.networking.vnet_names["vnet"]}-vnet-${var.env}"
+      name           = "vpn-to-${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}"
       vnet           = var.networking.vpn.vnet_name
       resource_group = var.networking.vpn.resource_group_name
     }
