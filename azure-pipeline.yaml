@@ -60,7 +60,7 @@ parameters:
           - subnet_ids
       - deployment: "apim_appgw"
         environment: "sbox"
-        dependsOn: "Precheck"
+        depends_on: "core"
         pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
       #
