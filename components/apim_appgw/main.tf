@@ -33,19 +33,19 @@ module "app-gw" {
   }
 
   source                                       = "git::https://github.com/hmcts/terraform-module-apim-application-gateway.git?ref=DTSPO-31984-waf-changes"
-  yaml_path                                    = "${path.cwd}/../../environments/${local.env}/apim_appgw_config.yaml"
+  yaml_path                                    = "${path.cwd}/../../environments/${var.env}/apim_appgw_config.yaml"
   env                                          = local.dns_zone
   location                                     = var.location
   private_ip_address                           = var.hub_app_gw_private_ip_address
   backend_pool_ip_addresses                    = var.apim_appgw_backend_pool_ips
   backend_pool_fqdns                           = var.apim_appgw_backend_pool_fqdns
   vault_name                                   = local.key_vault_name
-  vnet_rg                                      = local.vnet_rg
-  vnet_name                                    = local.vnet_name
+  vnet_rg                                      = "rg-${var.product}-${var.env}"
+  vnet_name                                    = "${var.product}-networking-vnet-${var.env}"
   common_tags                                  = module.ctags.common_tags
   log_analytics_workspace_id                   = module.logworkspace.workspace_id
   key_vault_resource_group                     = local.key_vault_resource_group
-  subnet_name                                  = local.subnet_name
+  subnet_name                                  = "${var.product}-networking-app-gateway-${var.env}"
   waf_mode                                     = var.waf_mode
   exclusions                                   = var.apim_appgw_exclusions
   public_ip_enable_multiple_availability_zones = true
