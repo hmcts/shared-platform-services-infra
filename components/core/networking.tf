@@ -22,8 +22,11 @@ module "networking" {
         # Subnet 0 — API Management
         # Azure minimum subnet size: /27. A /24 is derived here to provide
         # headroom across multiple APIM units. No delegation required.
+        # name_override is required: cnp-module-api-mgmt-private hardcodes
+        # the subnet lookup name as "api-management".
         api-management = {
           address_prefixes = [cidrsubnet(local.env-specific-supernet, 2, 0)]
+          name_override    = "api-management"
         }
         # Subnet 1 — Application Gateway v2 / WAF
         # Azure hard requirement: /24 minimum for Application Gateway v2 with WAF.
