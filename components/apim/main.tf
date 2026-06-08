@@ -10,8 +10,8 @@ module "api-mgmt" {
   source                               = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=main"
   location                             = var.location
   sku_name                             = var.apim_sku_name
-  virtual_network_resource_group       = "rg-${var.product}-${var.env}"
-  virtual_network_name                 = "${var.product}-networking-vnet-${var.env}"
+  virtual_network_resource_group       = local.vnet_rg
+  virtual_network_name                 = local.vnet_name
   environment                          = var.env
   virtual_network_type                 = "Internal"
   additional_routes_apim               = var.additional_routes_apim
@@ -25,7 +25,7 @@ module "api-mgmt" {
 
 resource "azurerm_api_management_named_value" "environment" {
   name                = "environment"
-  resource_group_name = "rg-${var.product}-${var.env}"
+  resource_group_name = local.vnet_rg
   api_management_name = module.api-mgmt.name
   display_name        = "environment"
   value               = var.env
@@ -33,12 +33,12 @@ resource "azurerm_api_management_named_value" "environment" {
 
 # Disable the developer portal sign-in and sign-up by default.
 # To re-enable, set enable_developer_portal = true in the environment tfvars.
-# azurerm_api_management_sign_in/up_settings were merged into azurerm_api_management
-# in azurerm v4, but that resource is owned by the module. Use the ARM
-# portalsettings sub-resources via azapi instead.
+# sign_in/sign_up are now blocks on azurerm_api_management in azurerm v4, but
+# that resource is owned by the module. Use the ARM portalsettings sub-resources
+# via azapi instead (the same pattern the module uses internally).
 data "azurerm_api_management" "apim" {
   name                = module.api-mgmt.name
-  resource_group_name = "rg-${var.product}-${var.env}"
+  resource_group_name = local.vnet_rg
 }
 
 resource "azapi_resource" "apim_signin_settings" {
@@ -64,9 +64,9 @@ resource "azapi_resource" "apim_signup_settings" {
     properties = {
       enabled = var.enable_developer_portal
       termsOfService = {
-        enabled          = false
-        consentRequired  = false
-        text             = ""
+        enabled         = false
+        consentRequired = false
+        text            = ""
       }
     }
   }
