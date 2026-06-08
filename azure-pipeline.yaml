@@ -62,6 +62,10 @@ parameters:
         environment: "sbox"
         depends_on: "core"
         pipeline_tests: false
+      - deployment: "apim"
+        environment: "sbox"
+        dependsOn: "Precheck"
+        pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
       #
       # - deployment: 'app_gateway'
