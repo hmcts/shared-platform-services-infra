@@ -31,29 +31,22 @@ resource "azurerm_api_management_named_value" "environment" {
   value               = var.env
 }
 
-# Look up the APIM resource to obtain its ID for portal configuration.
-# The module only outputs the APIM name, so a data source is required.
-data "azurerm_api_management" "apim" {
-  name                = module.api-mgmt.name
-  resource_group_name = "rg-${var.product}-${var.env}"
-}
-
 # Disable the developer portal sign-in and sign-up by default.
 # To re-enable, set enable_developer_portal = true in the environment tfvars.
-resource "azurerm_api_management_portal_config" "developer_portal" {
-  count             = var.enable_developer_portal ? 0 : 1
-  api_management_id = data.azurerm_api_management.apim.id
+resource "azurerm_api_management_sign_in_settings" "developer_portal" {
+  api_management_name = module.api-mgmt.name
+  resource_group_name = "rg-${var.product}-${var.env}"
+  enabled             = var.enable_developer_portal
+}
 
-  sign_in {
-    enabled = false
-  }
+resource "azurerm_api_management_sign_up_settings" "developer_portal" {
+  api_management_name = module.api-mgmt.name
+  resource_group_name = "rg-${var.product}-${var.env}"
+  enabled             = var.enable_developer_portal
 
-  sign_up {
-    enabled = false
-    terms_of_service {
-      enabled          = false
-      consent_required = false
-      text             = ""
-    }
+  terms_of_service {
+    enabled          = false
+    consent_required = false
+    text             = ""
   }
 }
