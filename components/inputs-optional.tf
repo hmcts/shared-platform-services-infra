@@ -108,6 +108,18 @@ variable "disable_trusted_service_connectivity" {
   default     = false
 }
 
+variable "publisher_email" {
+  description = "The email address of the APIM publisher."
+  type        = string
+  default     = "DTSPlatformOperations@justice.gov.uk"
+}
+
+variable "enable_developer_portal" {
+  description = "Whether to enable the APIM developer portal sign-in and sign-up. Disabled by default. Set to true in the environment tfvars to re-enable."
+  type        = bool
+  default     = false
+}
+
 variable "apim_custom_nsg_rules" {
   description = "A map of custom NSG rules to apply in addition to the default rules to the APIM NSG"
   type = map(object({
