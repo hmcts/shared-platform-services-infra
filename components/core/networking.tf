@@ -24,6 +24,7 @@ module "networking" {
         # headroom across multiple APIM units. No delegation required.
         api-management = {
           address_prefixes = [cidrsubnet(local.env-specific-supernet, 2, 0)]
+          name_override     = "api-management"
         }
         # Subnet 1 — Application Gateway v2 / WAF
         # Azure hard requirement: /24 minimum for Application Gateway v2 with WAF.
