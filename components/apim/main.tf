@@ -33,20 +33,43 @@ resource "azurerm_api_management_named_value" "environment" {
 
 # Disable the developer portal sign-in and sign-up by default.
 # To re-enable, set enable_developer_portal = true in the environment tfvars.
-resource "azurerm_api_management_sign_in_settings" "developer_portal" {
-  api_management_name = module.api-mgmt.name
+# azurerm_api_management_sign_in/up_settings were merged into azurerm_api_management
+# in azurerm v4, but that resource is owned by the module. Use the ARM
+# portalsettings sub-resources via azapi instead.
+data "azurerm_api_management" "apim" {
+  name                = module.api-mgmt.name
   resource_group_name = "rg-${var.product}-${var.env}"
-  enabled             = var.enable_developer_portal
 }
 
-resource "azurerm_api_management_sign_up_settings" "developer_portal" {
-  api_management_name = module.api-mgmt.name
-  resource_group_name = "rg-${var.product}-${var.env}"
-  enabled             = var.enable_developer_portal
+resource "azapi_resource" "apim_signin_settings" {
+  type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
+  name      = "signin"
+  parent_id = data.azurerm_api_management.apim.id
 
-  terms_of_service {
-    enabled          = false
-    consent_required = false
-    text             = ""
+  body = {
+    properties = {
+      enabled = var.enable_developer_portal
+    }
   }
+
+  depends_on = [module.api-mgmt]
+}
+
+resource "azapi_resource" "apim_signup_settings" {
+  type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
+  name      = "signup"
+  parent_id = data.azurerm_api_management.apim.id
+
+  body = {
+    properties = {
+      enabled = var.enable_developer_portal
+      termsOfService = {
+        enabled          = false
+        consentRequired  = false
+        text             = ""
+      }
+    }
+  }
+
+  depends_on = [module.api-mgmt]
 }
