@@ -24,7 +24,7 @@ module "app-gw" {
   count = var.env == "sbox" ? 1 : 0
 
   providers = {
-    azurerm     = azurerm
+    azurerm = azurerm
     # The App Gateway, VNet and subnet all live in the SPS subscription
     # (created by the core component), so point the module's hub-aliased
     # provider at the default SPS provider rather than the HMCTS hub.

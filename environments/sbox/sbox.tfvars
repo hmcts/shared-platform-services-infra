@@ -1,11 +1,11 @@
-project            = "spshmcts"
-location           = "uksouth"
-env                = "sbox"
-subscription       = "sbox"
-cdn_sku            = "Standard_Verizon"
-sku_tier           = "Free"
-sku_size           = "Free"
-autoShutdown       = true
+project      = "spshmcts"
+location     = "uksouth"
+env          = "sbox"
+subscription = "sbox"
+cdn_sku      = "Standard_Verizon"
+sku_tier     = "Free"
+sku_size     = "Free"
+autoShutdown = true
 
 ssl_policy = {
   policy_type          = "Predefined"

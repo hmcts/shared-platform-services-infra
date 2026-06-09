@@ -1,5 +1,5 @@
 locals {
-  
+
   key_vault_resource_group = "sps-platform-${var.subscription}-rg"
   key_vault_subscription   = var.key_vault_subscription
 
