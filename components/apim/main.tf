@@ -21,6 +21,7 @@ module "api-mgmt" {
   publisher_email                      = var.publisher_email
   disable_trusted_service_connectivity = var.disable_trusted_service_connectivity
   custom_nsg_rules                     = var.apim_custom_nsg_rules
+  cert_domain                          = "api"
 }
 
 resource "azurerm_api_management_named_value" "environment" {
