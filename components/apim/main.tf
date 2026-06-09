@@ -39,6 +39,8 @@ resource "azurerm_api_management_named_value" "environment" {
 data "azurerm_api_management" "apim" {
   name                = module.api-mgmt.name
   resource_group_name = local.vnet_rg
+
+  depends_on = [module.api-mgmt]
 }
 
 resource "azapi_resource" "apim_signin_settings" {
