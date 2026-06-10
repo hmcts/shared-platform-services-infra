@@ -87,6 +87,16 @@ module "networking" {
           source_address_prefix      = "VirtualNetwork"
           destination_address_prefix = "VirtualNetwork"
         }
+        "allow_apim_management_inbound" = {
+          priority                   = 201
+          direction                  = "Inbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_range     = "3443"
+          source_address_prefix      = "ApiManagement"
+          destination_address_prefix = "VirtualNetwork"
+        }
       }
     }
   }
