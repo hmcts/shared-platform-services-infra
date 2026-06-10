@@ -49,6 +49,14 @@ module "networking" {
           next_hop_type          = "VirtualAppliance"
           next_hop_in_ip_address = var.networking.hub.next_hop_ip
         }
+        # Required for APIM Internal VNet mode: bypass the firewall for the
+        # ApiManagement control plane IP (UK South) so the management endpoint
+        # on port 3443 is reachable. Without this, force-tunnelling via the
+        # VirtualAppliance breaks the management endpoint connection.
+        apim-management-uksouth = {
+          address_prefix = "51.145.56.125/32" # APIM management plane IP for UK South, as of June 2024. Unable to use service tag, as APIM management plane is not tagged.
+          next_hop_type  = "Internet"
+        }
       }
     }
     appgw-rt = {
