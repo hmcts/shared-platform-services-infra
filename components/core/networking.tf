@@ -97,6 +97,16 @@ module "networking" {
           source_address_prefix      = "ApiManagement"
           destination_address_prefix = "VirtualNetwork"
         }
+        "allow_azure_load_balancer_inbound" = {
+          priority                   = 202
+          direction                  = "Inbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_range     = "6390"
+          source_address_prefix      = "AzureLoadBalancer"
+          destination_address_prefix = "VirtualNetwork"
+        }
       }
     }
   }
