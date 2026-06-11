@@ -46,11 +46,6 @@ data "azurerm_api_management" "apim" {
   depends_on = [module.api-mgmt]
 }
 
-import {
-  to = azapi_resource.apim_signin_settings
-  id = "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/rg-sps-platform-sbox/providers/Microsoft.ApiManagement/service/sps-api-mgmt-sbox/portalsettings/signin"
-}
-
 resource "azapi_resource" "apim_signin_settings" {
   type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
   name      = "signin"
@@ -63,11 +58,6 @@ resource "azapi_resource" "apim_signin_settings" {
   }
 
   depends_on = [module.api-mgmt]
-}
-
-import {
-  to = azapi_resource.apim_signup_settings
-  id = "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/rg-sps-platform-sbox/providers/Microsoft.ApiManagement/service/sps-api-mgmt-sbox/portalsettings/signup"
 }
 
 resource "azapi_resource" "apim_signup_settings" {
