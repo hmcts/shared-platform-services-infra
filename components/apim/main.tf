@@ -22,8 +22,6 @@ module "api-mgmt" {
   disable_trusted_service_connectivity = var.disable_trusted_service_connectivity
   custom_nsg_rules                     = var.apim_custom_nsg_rules
   cert_domain                          = "api"
-  manage_route_table                   = false
-  manage_nsg                           = false
   custom_top_level_domain              = "api.hmcts.net"
 
 }
