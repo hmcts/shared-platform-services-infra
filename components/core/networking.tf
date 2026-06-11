@@ -42,7 +42,7 @@ module "networking" {
 
   route_tables = {
     rt = {
-      subnets = ["vnet-api-management", "vnet-private-endpoints"]
+      subnets = ["vnet-private-endpoints"]
       routes = {
         default = {
           address_prefix         = "0.0.0.0/0"
@@ -83,7 +83,7 @@ module "networking" {
 
   network_security_groups = {
     nsg = {
-      subnets = ["vnet-api-management", "vnet-private-endpoints"]
+      subnets = ["vnet-private-endpoints"]
       rules = {
         "allow_intra_subnet" = {
           priority                   = 200
