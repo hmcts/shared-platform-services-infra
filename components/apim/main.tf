@@ -7,7 +7,7 @@ module "ctags" {
 }
 
 module "api-mgmt" {
-  source                               = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=main"
+  source                               = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=change/top_level_domain"
   location                             = var.location
   sku_name                             = var.apim_sku_name
   virtual_network_resource_group       = local.vnet_rg
@@ -22,6 +22,10 @@ module "api-mgmt" {
   disable_trusted_service_connectivity = var.disable_trusted_service_connectivity
   custom_nsg_rules                     = var.apim_custom_nsg_rules
   cert_domain                          = "api"
+  manage_route_table                   = false
+  manage_nsg                           = false
+  custom_top_level_domain              = "api.hmcts.net"
+
 }
 
 resource "azurerm_api_management_named_value" "environment" {
