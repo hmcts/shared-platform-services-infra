@@ -25,3 +25,8 @@ resource "azurerm_role_assignment" "private_dns_vnet_join" {
   principal_id         = each.value
   description          = "Allow private-dns pipeline SPN to link internal.hmcts.net zones to this VNet"
 }
+
+moved {
+  from = azurerm_role_assignment.private_dns_vnet_join
+  to   = azurerm_role_assignment.private_dns_vnet_join["b8f08f77-4ce2-43d5-a23b-c7ca735eca02"]
+}
