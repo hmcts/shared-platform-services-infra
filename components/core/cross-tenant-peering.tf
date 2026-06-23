@@ -103,26 +103,23 @@ module "cross_tenant_peering" {
 
   count = var.env == "sbox" ? 1 : 0
 
-  source = "../modules/cross-tenant-peering"
+  source = "../../modules/cross-tenant-peering"
 
   providers = {
     azurerm.initiator = azurerm.CNP-NonProd
     azurerm.target    = azurerm.CPP-Nonlive
   }
 
+  source_vnet_name      = module.networking.vnet_names["vnet"]
+  source_resource_group = module.networking.resource_group_name
+
   # CPP Nonlive peering targets
   peerings = {
-    source = {
-      name           = "${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}-to-cpp-nonlive-vn-ste-svc-01"
-      vnet_id        = "/subscriptions/${data.azurerm_subscription.current.subscription_id}/resourceGroups/${module.networking.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${module.networking.vnet_names["vnet"]}"
-      vnet           = module.networking.vnet_names["vnet"]
-      resource_group = module.networking.resource_group_name
+    "vn-ste-svc-01" = {
+      source_name = "${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}-to-cpp-nonlive-vn-ste-svc-01"
+      target_name = "cpp-nonlive-vn-ste-svc-01-to-${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}"
+      vnet_name   = "VN-STE-SVC-01"
+      rg_name     = "RG-STE-SVC-01"
     }
-    target = {
-      name           = "cpp-nonlive-vn-ste-svc-01-to-${module.networking.vnet_names["vnet"]}-vnet-${local.naming_env}"
-      vnet           = "VN-STE-SVC-01"
-      resource_group = "RG-STE-SVC-01"
-    }
-
   }
 }
