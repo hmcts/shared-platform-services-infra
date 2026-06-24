@@ -49,7 +49,7 @@ data "azurerm_key_vault_secret" "cnp_nonprod_hub_tenant_id" {
   count = var.env == "sbox" ? 1 : 0
 
   name         = "cnp-nonprod-hub-tenant-id"
-  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault.id
+  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
 }
 
 # TBC - CPP Tenant ID
@@ -57,7 +57,7 @@ data "azurerm_key_vault_secret" "cpp_nonlive_tenant_id" {
   count = var.env == "sbox" ? 1 : 0
 
   name         = "cpp-nonlive-hub-tenant-id"
-  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault.id
+  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
 }
 
 # TBC - CNP Subscription ID
@@ -65,7 +65,7 @@ data "azurerm_key_vault_secret" "cpp_nonlive_subscription_id" {
   count = var.env == "sbox" ? 1 : 0
 
   name         = "cpp-nonlive-subscription-id"
-  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault.id
+  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
 }
 
 provider "azurerm" {
