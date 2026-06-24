@@ -7,7 +7,7 @@ locals {
   cross_tenant_client_secret = local.nonprodi_cross_tenant_enabled ? try(data.azurerm_key_vault_secret.multi_tenant_client_secret[0].value, null) : null
   
   cross_tenant_aux_tenant_ids = local.nonprodi_cross_tenant_enabled ? compact([
-    try(data.azurerm_key_vault_secret.cnp_nonprod_hub_tenant_id[0].value, null)
+    try("531ff96d-0ae9-462a-8d2d-bec7c0b42082", null)
   ]) : []
 }
 
