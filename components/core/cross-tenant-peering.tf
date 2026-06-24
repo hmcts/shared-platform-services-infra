@@ -25,8 +25,8 @@ data "azurerm_key_vault" "central_app_registration" {
 data "azurerm_key_vault" "hub_azure_keyvault" {
   count = var.env == "sbox" ? 1 : 0
 
-  name                = "hmcts-infra-hub-${var.env}"
-  resource_group_name = "hmcts-infra-hub-${var.env}"
+  name                = "hmcts-infra-hub-${var.env}-int"
+  resource_group_name = "hmcts-infra-hub-${var.env}-int"
 }
 
 
