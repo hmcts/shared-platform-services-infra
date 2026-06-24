@@ -25,6 +25,8 @@ data "azurerm_key_vault" "central_app_registration" {
 data "azurerm_key_vault" "hub_azure_keyvault" {
   count = var.env == "sbox" ? 1 : 0
 
+  provider = azurerm.hub-kv
+
   name                = "hmcts-infra-hub-${var.env}-int"
   resource_group_name = "hmcts-infra-hub-${var.env}-int"
 }
@@ -80,6 +82,13 @@ provider "azurerm" {
   features {}
   resource_provider_registrations = "none"
   subscription_id                 = "6c4d2513-a873-41b4-afdd-b05a33206631"
+}
+
+provider "azurerm" {
+  alias = "hub-kv"
+  features {}
+  resource_provider_registrations = "none"
+  subscription_id                 = var.networking.hub.subscription_id
 }
 
 provider "azurerm" {
