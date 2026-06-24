@@ -68,6 +68,13 @@ data "azurerm_key_vault_secret" "cpp_nonlive_subscription_id" {
   key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
 }
 
+data "azurerm_key_vault_secret" "cnp-sbox-sps-platform-subscription-id" {
+  count = var.env == "sbox" ? 1 : 0
+
+  name         = "cnp-sbox-sps-platform-subscription-id"
+  key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
+}
+
 provider "azurerm" {
   alias = "central-app-kv"
   features {}
@@ -80,7 +87,7 @@ provider "azurerm" {
   features {}
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
 
-  subscription_id      = data.azurerm_key_vault_secret.hub_subscription_id.value
+  subscription_id      = data.azurerm_key_vault_secret.cnp-sbox-sps-platform-subscription-id[0].value
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
   tenant_id            = try(data.azurerm_key_vault_secret.cnp_nonprod_hub_tenant_id[0].value, null)
@@ -92,7 +99,7 @@ provider "azurerm" {
   features {}
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
 
-  subscription_id      = try(data.azurerm_key_vault_secret.cpp_nonlive_subscription_id[0].value, data.azurerm_key_vault_secret.hub_subscription_id.value)
+  subscription_id      = try(data.azurerm_key_vault_secret.cpp_nonlive_subscription_id[0].value, data.azurerm_key_vault_secret.cnp-sbox-sps-platform-subscription-id[0].value)
   tenant_id            = try(data.azurerm_key_vault_secret.cpp_nonlive_tenant_id[0].value, data.azurerm_client_config.current.tenant_id)
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
