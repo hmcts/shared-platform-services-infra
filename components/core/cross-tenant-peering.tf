@@ -79,17 +79,15 @@ data "azurerm_key_vault_secret" "multi_tenant_client_secret" {
 # }
 
 provider "azurerm" {
-  alias = "central-app-kv"
+  alias           = "central-app-kv"
   features {}
-  resource_provider_registrations = "none"
-  subscription_id                 = "6c4d2513-a873-41b4-afdd-b05a33206631"
+  subscription_id = "6c4d2513-a873-41b4-afdd-b05a33206631"
 }
 
 provider "azurerm" {
-  alias = "hub-kv"
+  alias           = "hub-kv"
   features {}
-  resource_provider_registrations = "none"
-  subscription_id                 = var.networking.hub.subscription_id
+  subscription_id = var.networking.hub.subscription_id
 }
 
 provider "azurerm" {
