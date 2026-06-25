@@ -35,14 +35,14 @@ data "azurerm_key_vault" "central_app_registration" {
 data "azurerm_key_vault_secret" "multi_tenant_client_id" {
   count = var.env == "sbox" ? 1 : 0
 
-  name         = "nonlive-crime-vn-ste-svc-01-cross-tenant-app-id"
+  name         = "nonlive-crime-idam-cross-tenant-app-id"
   key_vault_id = data.azurerm_key_vault.central_app_registration[0].id
 }
 
 data "azurerm_key_vault_secret" "multi_tenant_client_secret" {
   count = var.env == "sbox" ? 1 : 0
 
-  name         = "nonlive-crime-vn-ste-svc-01-cross-tenant-secret"
+  name         = "nonlive-crime-idam-cross-tenant-secret"
   key_vault_id = data.azurerm_key_vault.central_app_registration[0].id
 }
 
