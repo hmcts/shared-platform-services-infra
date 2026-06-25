@@ -5,7 +5,7 @@ locals {
   private_dns_pipeline_principal_ids = var.env == "sbox" ? toset([
     "b8f08f77-4ce2-43d5-a23b-c7ca735eca02", # dts-cftptl-intsvc
     "2070d748-c35c-478f-a5ca-ec8a5c4ff10d"  # dts-cftsbox-intsvc
-  ]) : toset([
+    ]) : toset([
     "b8f08f77-4ce2-43d5-a23b-c7ca735eca02"
   ])
 }

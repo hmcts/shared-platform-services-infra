@@ -34,26 +34,36 @@ resource "azurerm_api_management_named_value" "environment" {
   value               = var.env
 }
 
+data "azurerm_key_vault_certificate" "portal" {
+  count        = var.developer_portal.custom_domain_name != null ? 1 : 0
+  name         = var.developer_portal.cert_name
+  key_vault_id = var.developer_portal.key_vault_id
+}
+
+resource "azurerm_api_management_custom_domain" "example" {
+  count             = var.developer_portal.custom_domain_name != null ? 1 : 0
+  api_management_id = module.api-mgmt.id
+
+  developer_portal {
+    host_name                = var.developer_portal.custom_domain_name
+    key_vault_certificate_id = data.azurerm_key_vault_certificate.portal[0].versionless_secret_id
+  }
+}
+
 # Disable the developer portal sign-in and sign-up by default.
 # To re-enable, set enable_developer_portal = true in the environment tfvars.
 # sign_in/sign_up are now blocks on azurerm_api_management in azurerm v4, but
 # that resource is owned by the module. Use the ARM portalsettings sub-resources
 # via azapi instead (the same pattern the module uses internally).
-data "azurerm_api_management" "apim" {
-  name                = module.api-mgmt.name
-  resource_group_name = local.vnet_rg
-
-  depends_on = [module.api-mgmt]
-}
 
 resource "azapi_resource" "apim_signin_settings" {
   type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
   name      = "signin"
-  parent_id = data.azurerm_api_management.apim.id
+  parent_id = module.api-mgmt.id
 
   body = {
     properties = {
-      enabled = var.enable_developer_portal
+      enabled = var.developer_portal.enabled
     }
   }
 
@@ -63,11 +73,11 @@ resource "azapi_resource" "apim_signin_settings" {
 resource "azapi_resource" "apim_signup_settings" {
   type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
   name      = "signup"
-  parent_id = data.azurerm_api_management.apim.id
+  parent_id = module.api-mgmt.id
 
   body = {
     properties = {
-      enabled = var.enable_developer_portal
+      enabled = var.developer_portal.enabled
       termsOfService = {
         enabled         = false
         consentRequired = false
