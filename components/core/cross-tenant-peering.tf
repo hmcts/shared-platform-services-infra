@@ -82,20 +82,23 @@ provider "azurerm" {
   alias = "central-app-kv"
   features {}
   resource_provider_registrations = "none"
+  skip_provider_registration      = true
   subscription_id                 = "6c4d2513-a873-41b4-afdd-b05a33206631"
 }
 
-# provider "azurerm" {
-#   alias = "hub-kv"
-#   features {}
-#   resource_provider_registrations = "none"
-#   subscription_id                 = var.networking.hub.subscription_id
-# }
+provider "azurerm" {
+  alias = "hub-kv"
+  features {}
+  resource_provider_registrations = "none"
+  skip_provider_registration      = true
+  subscription_id                 = var.networking.hub.subscription_id
+}
 
 provider "azurerm" {
   alias = "CNP-NonProd"
   features {}
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
+  skip_provider_registration      = !local.nonprodi_cross_tenant_enabled
 
   subscription_id      = "bd2864ed-4f3e-45ed-9c6a-8d179674bab1"
   client_id            = local.cross_tenant_client_id
@@ -108,6 +111,7 @@ provider "azurerm" {
   alias = "CPP-Nonlive"
   features {}
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
+  skip_provider_registration      = !local.nonprodi_cross_tenant_enabled
 
   subscription_id      = "e6b5053b-4c38-4475-a835-a025aeb3d8c7"
   tenant_id            = "e2995d11-9947-4e78-9de6-d44e0603518e"
