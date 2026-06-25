@@ -114,12 +114,6 @@ variable "publisher_email" {
   default     = "DTSPlatformOperations@justice.gov.uk"
 }
 
-variable "enable_developer_portal" {
-  description = "Whether to enable the APIM developer portal sign-in and sign-up. Disabled by default. Set to true in the environment tfvars to re-enable."
-  type        = bool
-  default     = false
-}
-
 variable "apim_custom_nsg_rules" {
   description = "A map of custom NSG rules to apply in addition to the default rules to the APIM NSG"
   type = map(object({
@@ -137,5 +131,16 @@ variable "apim_custom_nsg_rules" {
     destination_address_prefixes = optional(list(string))
     description                  = optional(string)
   }))
+  default = {}
+}
+
+variable "developer_portal" {
+  description = "Configuration for the APIM developer portal custom domain and certificate"
+  type = object({
+    enabled            = optional(bool, false)
+    custom_domain_name = optional(string)
+    key_vault_id       = optional(string)
+    cert_name          = optional(string)
+  })
   default = {}
 }

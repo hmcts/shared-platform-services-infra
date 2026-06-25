@@ -28,3 +28,10 @@ networking = {
   }
   vpn = {}
 }
+
+developer_portal = {
+  enabled            = true
+  custom_domain_name = "amp-portal.sandbox.api.hmcts.net"
+  key_vault_id       = "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/sps-platform-sbox-rg/providers/Microsoft.KeyVault/vaults/acmedtsspssbox"
+  cert_name          = "amp-portal-sandbox-api-hmcts-net"
+}
