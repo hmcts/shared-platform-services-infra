@@ -3,9 +3,9 @@ locals {
 
   # Shared cross-tenant credentials (only populated when nonprodi_cross_tenant_enabled)
   cross_tenant_client_id     = local.nonprodi_cross_tenant_enabled ? try(data.azurerm_key_vault_secret.multi_tenant_client_id[0].value, null) : null
-  
+
   cross_tenant_client_secret = local.nonprodi_cross_tenant_enabled ? try(data.azurerm_key_vault_secret.multi_tenant_client_secret[0].value, null) : null
-  
+
   cross_tenant_aux_tenant_ids = local.nonprodi_cross_tenant_enabled ? compact([
     try("531ff96d-0ae9-462a-8d2d-bec7c0b42082", null)
   ]) : []
@@ -14,7 +14,7 @@ locals {
 
 data "azurerm_key_vault" "central_app_registration" {
   count = var.env == "sbox" ? 1 : 0
-  
+
   provider = azurerm.central-app-kv
 
   name                = "central-app-reg-kv"
@@ -79,27 +79,29 @@ data "azurerm_key_vault_secret" "multi_tenant_client_secret" {
 # }
 
 provider "azurerm" {
-  alias           = "central-app-kv"
+  alias = "central-app-kv"
   features {}
-  subscription_id = "6c4d2513-a873-41b4-afdd-b05a33206631"
+  resource_provider_registrations = "none"
+  subscription_id                 = "6c4d2513-a873-41b4-afdd-b05a33206631"
 }
 
-provider "azurerm" {
-  alias           = "hub-kv"
-  features {}
-  subscription_id = var.networking.hub.subscription_id
-}
+# provider "azurerm" {
+#   alias = "hub-kv"
+#   features {}
+#   resource_provider_registrations = "none"
+#   subscription_id                 = var.networking.hub.subscription_id
+# }
 
 provider "azurerm" {
   alias = "CNP-NonProd"
   features {}
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
 
-  subscription_id      = local.nonprodi_cross_tenant_enabled ? "bd2864ed-4f3e-45ed-9c6a-8d179674bab1" : data.azurerm_subscription.current.subscription_id
+  subscription_id      = "bd2864ed-4f3e-45ed-9c6a-8d179674bab1"
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
-  tenant_id            = local.nonprodi_cross_tenant_enabled ? "531ff96d-0ae9-462a-8d2d-bec7c0b42082" : data.azurerm_client_config.current.tenant_id
-  auxiliary_tenant_ids = local.nonprodi_cross_tenant_enabled ? ["e2995d11-9947-4e78-9de6-d44e0603518e"] : []
+  tenant_id            = "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+  auxiliary_tenant_ids = ["e2995d11-9947-4e78-9de6-d44e0603518e"]
 }
 
 provider "azurerm" {
@@ -107,8 +109,10 @@ provider "azurerm" {
   features {}
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
 
-  subscription_id      = local.nonprodi_cross_tenant_enabled ? "e6b5053b-4c38-4475-a835-a025aeb3d8c7" : data.azurerm_subscription.current.subscription_id
-  tenant_id            = local.nonprodi_cross_tenant_enabled ? "e2995d11-9947-4e78-9de6-d44e0603518e" : data.azurerm_client_config.current.tenant_id
+  subscription_id      = "e6b5053b-4c38-4475-a835-a025aeb3d8c7"
+  tenant_id            = "e2995d11-9947-4e78-9de6-d44e0603518e"
+  client_id            = local.cross_tenant_client_id
+  client_secret        = local.cross_tenant_client_secret
   auxiliary_tenant_ids = local.cross_tenant_aux_tenant_ids
 }
 
