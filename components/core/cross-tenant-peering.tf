@@ -11,6 +11,7 @@ locals {
   ]) : []
 }
 
+
 data "azurerm_key_vault" "central_app_registration" {
   count = var.env == "sbox" ? 1 : 0
 
@@ -20,6 +21,16 @@ data "azurerm_key_vault" "central_app_registration" {
   resource_group_name = "central-app-registration-rg"
 
 }
+
+# data "azurerm_key_vault" "hub_azure_keyvault" {
+#   count = var.env == "sbox" ? 1 : 0
+
+#   provider = azurerm.hub-kv
+
+#   name                = "hmcts-infra-hub-${var.env}-int"
+#   resource_group_name = "hmcts-infra-hub-${var.env}-int"
+# }
+
 
 data "azurerm_key_vault_secret" "multi_tenant_client_id" {
   count = var.env == "sbox" ? 1 : 0
@@ -35,11 +46,51 @@ data "azurerm_key_vault_secret" "multi_tenant_client_secret" {
   key_vault_id = data.azurerm_key_vault.central_app_registration[0].id
 }
 
+# # CNP Tenant ID - 531ff96d-0ae9-462a-8d2d-bec7c0b42082
+# data "azurerm_key_vault_secret" "cnp_nonprod_hub_tenant_id" {
+#   count = var.env == "sbox" ? 1 : 0
+
+#   name         = "cnp-nonprod-hub-tenant-id"
+#   key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
+# }
+
+# # TBC - CPP Tenant ID - e2995d11-9947-4e78-9de6-d44e0603518e
+# data "azurerm_key_vault_secret" "cpp_nonlive_tenant_id" {
+#   count = var.env == "sbox" ? 1 : 0
+
+#   name         = "cpp-nonlive-hub-tenant-id"
+#   key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
+# }
+
+# # TBC - CPP Subscription ID - e6b5053b-4c38-4475-a835-a025aeb3d8c7
+# data "azurerm_key_vault_secret" "cpp_nonlive_subscription_id" {
+#   count = var.env == "sbox" ? 1 : 0
+
+#   name         = "cpp-nonlive-subscription-id"
+#   key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
+# }
+
+# bd2864ed-4f3e-45ed-9c6a-8d179674bab1
+# data "azurerm_key_vault_secret" "cnp-sbox-sps-platform-subscription-id" {
+#   count = var.env == "sbox" ? 1 : 0
+
+#   name         = "cnp-sbox-sps-platform-subscription-id"
+#   key_vault_id = data.azurerm_key_vault.hub_azure_keyvault[0].id
+# }
+
 provider "azurerm" {
   alias                      = "central-app-kv"
   features {}
+  skip_provider_registration = var.env != "sbox"
   subscription_id            = "6c4d2513-a873-41b4-afdd-b05a33206631"
 }
+
+# provider "azurerm" {
+#   alias = "hub-kv"
+#   features {}
+#   resource_provider_registrations = "none"
+#   subscription_id                 = var.networking.hub.subscription_id
+# }
 
 provider "azurerm" {
   alias = "CNP-NonProd"
@@ -49,8 +100,8 @@ provider "azurerm" {
   subscription_id      = "bd2864ed-4f3e-45ed-9c6a-8d179674bab1"
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
-  tenant_id            = "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-  auxiliary_tenant_ids = ["e2995d11-9947-4e78-9de6-d44e0603518e"]
+  tenant_id            = local.nonprodi_cross_tenant_enabled ? "531ff96d-0ae9-462a-8d2d-bec7c0b42082" : null
+  auxiliary_tenant_ids = local.nonprodi_cross_tenant_enabled ? ["e2995d11-9947-4e78-9de6-d44e0603518e"] : []
 }
 
 provider "azurerm" {
@@ -59,7 +110,7 @@ provider "azurerm" {
   resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
 
   subscription_id      = "e6b5053b-4c38-4475-a835-a025aeb3d8c7"
-  tenant_id            = "e2995d11-9947-4e78-9de6-d44e0603518e"
+  tenant_id            = local.nonprodi_cross_tenant_enabled ? "e2995d11-9947-4e78-9de6-d44e0603518e" : null
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
   auxiliary_tenant_ids = local.cross_tenant_aux_tenant_ids
