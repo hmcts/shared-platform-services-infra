@@ -1,39 +1,25 @@
 locals {
-  nonprodi_cross_tenant_enabled = var.env == "sbox"
-
-  # Shared cross-tenant credentials (only populated when nonprodi_cross_tenant_enabled)
-  cross_tenant_client_id     = local.nonprodi_cross_tenant_enabled ? try(data.azurerm_key_vault_secret.multi_tenant_client_id[0].value, null) : null
-
-  cross_tenant_client_secret = local.nonprodi_cross_tenant_enabled ? try(data.azurerm_key_vault_secret.multi_tenant_client_secret[0].value, null) : null
-
-  cross_tenant_aux_tenant_ids = local.nonprodi_cross_tenant_enabled ? compact([
-    try("531ff96d-0ae9-462a-8d2d-bec7c0b42082", null)
-  ]) : []
+  cross_tenant_client_id     = try(data.azurerm_key_vault_secret.multi_tenant_client_id.value, null)
+  cross_tenant_client_secret = try(data.azurerm_key_vault_secret.multi_tenant_client_secret.value, null)
+  cross_tenant_aux_tenant_ids = ["531ff96d-0ae9-462a-8d2d-bec7c0b42082"]
 }
 
 
 data "azurerm_key_vault" "central_app_registration" {
-  count = var.env == "sbox" ? 1 : 0
-
   provider = azurerm.central-app-kv
 
   name                = "central-app-reg-kv"
   resource_group_name = "central-app-registration-rg"
-
 }
 
 data "azurerm_key_vault_secret" "multi_tenant_client_id" {
-  count = var.env == "sbox" ? 1 : 0
-
   name         = "nonlive-crime-idam-cross-tenant-app-id"
-  key_vault_id = data.azurerm_key_vault.central_app_registration[0].id
+  key_vault_id = data.azurerm_key_vault.central_app_registration.id
 }
 
 data "azurerm_key_vault_secret" "multi_tenant_client_secret" {
-  count = var.env == "sbox" ? 1 : 0
-
   name         = "nonlive-crime-idam-cross-tenant-secret"
-  key_vault_id = data.azurerm_key_vault.central_app_registration[0].id
+  key_vault_id = data.azurerm_key_vault.central_app_registration.id
 }
 
 provider "azurerm" {
@@ -45,30 +31,28 @@ provider "azurerm" {
 provider "azurerm" {
   alias = "CNP-Sbox"
   features {}
-  resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
+  skip_provider_registration = true
 
   subscription_id      = "bd2864ed-4f3e-45ed-9c6a-8d179674bab1" # DTS-SPS-SBOX
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
-  tenant_id            = local.nonprodi_cross_tenant_enabled ? "531ff96d-0ae9-462a-8d2d-bec7c0b42082" : null # CNP Tenant ID
-  auxiliary_tenant_ids = local.nonprodi_cross_tenant_enabled ? ["e2995d11-9947-4e78-9de6-d44e0603518e"] : [] # CPP Nonlive Tenant ID
+  tenant_id            = "531ff96d-0ae9-462a-8d2d-bec7c0b42082" # CNP Tenant ID
+  auxiliary_tenant_ids = ["e2995d11-9947-4e78-9de6-d44e0603518e"] # CPP Nonlive Tenant ID
 }
 
 provider "azurerm" {
   alias = "CPP-Nonlive"
   features {}
-  resource_provider_registrations = local.nonprodi_cross_tenant_enabled ? "core" : "none"
+  skip_provider_registration = true
 
   subscription_id      = "e6b5053b-4c38-4475-a835-a025aeb3d8c7" # CPP Strategic Platform - non-live subscription
-  tenant_id            = local.nonprodi_cross_tenant_enabled ? "e2995d11-9947-4e78-9de6-d44e0603518e" : null #CPP Nonlive Tenant ID
+  tenant_id            = "e2995d11-9947-4e78-9de6-d44e0603518e" # CPP Nonlive Tenant ID
   client_id            = local.cross_tenant_client_id
   client_secret        = local.cross_tenant_client_secret
   auxiliary_tenant_ids = local.cross_tenant_aux_tenant_ids
 }
 
 module "cross_tenant_peering" {
-
-  count = var.env == "sbox" ? 1 : 0
 
   source = "../../modules/cross-tenant-peering"
 
