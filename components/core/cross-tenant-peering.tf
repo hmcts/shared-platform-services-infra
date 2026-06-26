@@ -54,6 +54,8 @@ provider "azurerm" {
 
 module "cross_tenant_peering" {
 
+  count = var.env == "sbox" ? 1 : 0
+
   source = "../../modules/cross-tenant-peering"
 
   providers = {
