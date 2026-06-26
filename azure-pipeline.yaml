@@ -33,22 +33,22 @@ parameters:
         depends_on: Precheck
       - name: dev
         service_connection: "DTS-SPS-PREVIEW"
-        depends_on: sbox
+        depends_on: Precheck
       - name: test
         service_connection: "DTS-SPS-PERFTEST"
-        depends_on: sbox
+        depends_on: Precheck
       - name: ithc
         service_connection: "DTS-SPS-ITHC"
-        depends_on: sbox
+        depends_on: Precheck
       - name: demo
         service_connection: "DTS-SPS-DEMO"
-        depends_on: sbox
+        depends_on: Precheck
       - name: stg
         service_connection: "DTS-SPS-STG"
-        depends_on: sbox
+        depends_on: Precheck
       - name: prod
         service_connection: "DTS-SPS-PROD"
-        depends_on: sbox
+        depends_on: Precheck
 
   - name: environment_components
     type: object
