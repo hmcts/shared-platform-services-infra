@@ -36,19 +36,19 @@ parameters:
         depends_on: sbox
       - name: test
         service_connection: "DTS-SPS-PERFTEST"
-        depends_on: dev
+        depends_on: sbox
       - name: ithc
         service_connection: "DTS-SPS-ITHC"
-        depends_on: test
+        depends_on: sbox
       - name: demo
         service_connection: "DTS-SPS-DEMO"
-        depends_on: ithc
+        depends_on: sbox
       - name: stg
         service_connection: "DTS-SPS-STG"
-        depends_on: demo
+        depends_on: sbox
       - name: prod
         service_connection: "DTS-SPS-PROD"
-        depends_on: stg
+        depends_on: sbox
 
   - name: environment_components
     type: object
