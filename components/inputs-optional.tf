@@ -44,6 +44,26 @@ variable "key_vault_subscription" {
   default = null
 }
 
+# Configuration for cross-tenant VNet peering providers and peering targets.
+# Subscription ID defaults match the known sbox/nonlive values and can be overridden per environment.
+variable "cross_tenant_peering" {
+  type = object({
+    # The CNP (hmcts) subscription that contains the SPS VNet to peer from
+    cnp_subscription_id = optional(string, "bd2864ed-4f3e-45ed-9c6a-8d179674bab1")
+    # The CPP non-live subscription that contains the target VNet to peer to
+    cpp_subscription_id = optional(string, "e6b5053b-4c38-4475-a835-a025aeb3d8c7")
+    # Map of VNet peerings to create — key is a logical name used as the Terraform resource key
+    peerings = optional(map(object({
+      source_name = string # Name of the peering link on the CNP/SPS side
+      target_name = string # Name of the peering link on the CPP side
+      vnet_name   = string # Name of the target VNet in the CPP subscription
+      rg_name     = string # Resource group of the target VNet in the CPP subscription
+    })), {})
+  })
+  description = "Configuration for cross-tenant VNet peering providers and peering targets."
+  default     = {}
+}
+
 variable "hub_app_gw_private_ip_address" {
   default = []
 }
