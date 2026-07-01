@@ -25,14 +25,14 @@ data "azurerm_key_vault_secret" "multi_tenant_client_secret" {
 provider "azurerm" {
   alias = "central-app-kv"
   features {}
-  skip_provider_registration = true
-  subscription_id            = "6c4d2513-a873-41b4-afdd-b05a33206631" # Central App Registration subscription
+  resource_provider_registrations = "none"
+  subscription_id                 = "6c4d2513-a873-41b4-afdd-b05a33206631" # Central App Registration subscription
 }
 
 provider "azurerm" {
   alias = "cnp-azurerm-provider"
   features {}
-  skip_provider_registration = true
+  resource_provider_registrations = "none"
 
   subscription_id      = var.cross_tenant_peering.cnp_subscription_id # CNP subscription containing the SPS VNet (set via cross_tenant_peering variable)
   client_id            = local.cross_tenant_client_id                 #
@@ -44,7 +44,7 @@ provider "azurerm" {
 provider "azurerm" {
   alias = "cpp-nonlive-azurerm-provider"
   features {}
-  skip_provider_registration = true
+  resource_provider_registrations = "none"
 
   subscription_id      = var.cross_tenant_peering.cpp_subscription_id # CPP subscription containing the target VNet (set via cross_tenant_peering variable)
   tenant_id            = "e2995d11-9947-4e78-9de6-d44e0603518e"       # CPP Nonlive Tenant ID

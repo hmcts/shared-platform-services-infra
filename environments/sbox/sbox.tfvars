@@ -16,7 +16,7 @@ ssl_policy = {
 }
 
 hub_app_gw_private_ip_address = ["10.180.1.10"]
-apim_appgw_backend_pool_fqdns = ["firewall-sbox-int-palo-spsapimgmt.uksouth.cloudapp.azure.com"]
+apim_appgw_backend_pool_fqdns = ["10.180.0.4"]
 
 
 # Cross-tenant VNet peering subscription IDs.
