@@ -23,7 +23,18 @@ module "api-mgmt" {
   custom_nsg_rules                     = var.apim_custom_nsg_rules
   cert_domain                          = "api"
   custom_top_level_domain              = "api.hmcts.net"
-
+  developer_portal = {
+    sign_in_enabled = true
+    sign_up = {
+      enabled          = false
+      terms_of_service = null
+    }
+    custom_domain = {
+      fqdn         = var.developer_portal.custom_domain_name
+      key_vault_id = var.developer_portal.key_vault_id
+      cert_name    = var.developer_portal.cert_name
+    }
+  }
 }
 
 resource "azurerm_api_management_named_value" "environment" {
@@ -38,53 +49,4 @@ data "azurerm_key_vault_certificate" "portal" {
   count        = var.developer_portal.custom_domain_name != null ? 1 : 0
   name         = var.developer_portal.cert_name
   key_vault_id = var.developer_portal.key_vault_id
-}
-
-resource "azurerm_api_management_custom_domain" "example" {
-  count             = var.developer_portal.custom_domain_name != null ? 1 : 0
-  api_management_id = module.api-mgmt.id
-
-  developer_portal {
-    host_name                = var.developer_portal.custom_domain_name
-    key_vault_certificate_id = data.azurerm_key_vault_certificate.portal[0].versionless_secret_id
-  }
-}
-
-# Disable the developer portal sign-in and sign-up by default.
-# To re-enable, set enable_developer_portal = true in the environment tfvars.
-# sign_in/sign_up are now blocks on azurerm_api_management in azurerm v4, but
-# that resource is owned by the module. Use the ARM portalsettings sub-resources
-# via azapi instead (the same pattern the module uses internally).
-
-resource "azapi_resource" "apim_signin_settings" {
-  type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
-  name      = "signin"
-  parent_id = module.api-mgmt.id
-
-  body = {
-    properties = {
-      enabled = var.developer_portal.enabled
-    }
-  }
-
-  depends_on = [module.api-mgmt]
-}
-
-resource "azapi_resource" "apim_signup_settings" {
-  type      = "Microsoft.ApiManagement/service/portalsettings@2022-08-01"
-  name      = "signup"
-  parent_id = module.api-mgmt.id
-
-  body = {
-    properties = {
-      enabled = var.developer_portal.enabled
-      termsOfService = {
-        enabled         = false
-        consentRequired = false
-        text            = ""
-      }
-    }
-  }
-
-  depends_on = [module.api-mgmt]
 }

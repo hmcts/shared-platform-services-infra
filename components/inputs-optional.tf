@@ -157,7 +157,6 @@ variable "apim_custom_nsg_rules" {
 variable "developer_portal" {
   description = "Configuration for the APIM developer portal custom domain and certificate"
   type = object({
-    enabled            = optional(bool, false)
     custom_domain_name = optional(string)
     key_vault_id       = optional(string)
     cert_name          = optional(string)
