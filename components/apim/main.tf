@@ -25,10 +25,7 @@ module "api-mgmt" {
   custom_top_level_domain              = "api.hmcts.net"
   developer_portal = {
     sign_in_enabled = true
-    sign_up = {
-      enabled          = false
-      terms_of_service = null
-    }
+    sign_up         = null
     custom_domain = {
       fqdn         = var.developer_portal.custom_domain_name
       key_vault_id = var.developer_portal.key_vault_id
