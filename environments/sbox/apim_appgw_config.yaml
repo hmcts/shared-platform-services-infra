@@ -11,7 +11,7 @@ gateways:
         component: apim-gateway-public
         ssl_enabled: true
         use_public_ip: true
-        host_name_prefix: api
+        host_name_prefix: sps-api-mgmt
         health_path_override: "/status-0123456789abcdef"
         ssl_certificate_name: wildcard-sandbox-api-hmcts-net
         host_name_suffix: sandbox.api.hmcts.net
@@ -38,7 +38,7 @@ gateways:
         component: apim-gateway-private
         ssl_enabled: true
         use_private_ip: true
-        host_name_prefix: api
+        host_name_prefix: sps-api-mgmt
         health_path_override: "/status-0123456789abcdef"
         ssl_certificate_name: wildcard-sandbox-api-hmcts-net
         host_name_suffix: sandbox.api.hmcts.net
