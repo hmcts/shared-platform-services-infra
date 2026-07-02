@@ -16,6 +16,12 @@ resource "azurerm_resource_group" "this" {
   tags     = module.ctags.common_tags
 }
 
+resource "azurerm_resource_group" "extid" {
+  name     = "rg-${var.product}-extid-${local.naming_env}"
+  location = var.location
+  tags     = module.ctags.common_tags
+}
+
 # Grant the azure-private-dns pipeline SPN Network Contributor on the SPS platform VNet.
 # SPN object ID: b8f08f77-4ce2-43d5-a23b-c7ca735eca02 (DTS Bootstrap)
 resource "azurerm_role_assignment" "private_dns_vnet_join" {

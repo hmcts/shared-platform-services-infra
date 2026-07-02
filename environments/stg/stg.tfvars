@@ -11,3 +11,5 @@ networking = {
   }
   vpn = {}
 }
+
+deploy_extid_rg = true

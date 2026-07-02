@@ -163,3 +163,9 @@ variable "developer_portal" {
   })
   default = {}
 }
+
+variable "deploy_extid_rg" {
+  description = "Whether to deploy the external identity resource group"
+  type        = bool
+  default     = false
+}
