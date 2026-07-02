@@ -10,6 +10,7 @@ gateways:
       - product: sps
         component: apim-gateway-public
         ssl_enabled: true
+        backend_protocol: Https
         use_public_ip: true
         host_name_prefix: sps-api-mgmt
         health_path_override: "/status-0123456789abcdef"
@@ -19,6 +20,7 @@ gateways:
       - product: sps
         component: apim-portal-public
         ssl_enabled: true
+        backend_protocol: Https
         use_public_ip: true
         host_name_prefix: amp-portal
         health_path_override: "/signin"
@@ -28,6 +30,7 @@ gateways:
       - product: sps
         component: apim-management-public
         ssl_enabled: true
+        backend_protocol: Https
         use_public_ip: true
         host_name_prefix: management
         health_path_override: "/ServiceStatus"
@@ -37,6 +40,7 @@ gateways:
       - product: sps
         component: apim-gateway-private
         ssl_enabled: true
+        backend_protocol: Https
         use_private_ip: true
         host_name_prefix: sps-api-mgmt
         health_path_override: "/status-0123456789abcdef"
@@ -46,6 +50,7 @@ gateways:
       - product: sps
         component: apim-portal-private
         ssl_enabled: true
+        backend_protocol: Https
         use_private_ip: true
         host_name_prefix: amp-portal
         health_path_override: "/signin"
@@ -55,6 +60,7 @@ gateways:
       - product: sps
         component: apim-management-private
         ssl_enabled: true
+        backend_protocol: Https
         use_private_ip: true
         host_name_prefix: management
         health_path_override: "/ServiceStatus"
