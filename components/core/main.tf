@@ -17,7 +17,7 @@ locals {
     }
     } : {}, var.deploy_extid_rg ? {
     "api_marketplace-extid" = {
-      scope                = azurerm_resource_group.extid.id
+      scope                = azurerm_resource_group.extid[0].id
       role_definition_name = var.env == "sbox" ? "Contributor" : "Reader"
       principal_id         = data.azuread_group.api_marketplace.object_id
     }
