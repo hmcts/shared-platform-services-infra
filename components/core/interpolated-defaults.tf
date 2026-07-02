@@ -8,3 +8,8 @@ module "ctags" {
 
 data "azurerm_client_config" "current" {}
 data "azurerm_subscription" "current" {}
+
+data "azuread_group" "api_marketplace" {
+  display_name     = "DTS API Marketplace"
+  security_enabled = true
+}

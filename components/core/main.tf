@@ -8,6 +8,20 @@ locals {
     ]) : toset([
     "b8f08f77-4ce2-43d5-a23b-c7ca735eca02"
   ])
+
+  role_assignments = merge(var.env != "prod" ? {
+    "api_marketplace-apim" = {
+      scope                = azurerm_resource_group.this.id
+      role_definition_name = var.env == "sbox" ? "Contributor" : "Reader"
+      principal_id         = data.azuread_group.api_marketplace.object_id
+    }
+    } : {}, var.deploy_extid_rg ? {
+    "api_marketplace-extid" = {
+      scope                = azurerm_resource_group.extid.id
+      role_definition_name = var.env == "sbox" ? "Contributor" : "Reader"
+      principal_id         = data.azuread_group.api_marketplace.object_id
+    }
+  } : {})
 }
 
 resource "azurerm_resource_group" "this" {
@@ -33,7 +47,9 @@ resource "azurerm_role_assignment" "private_dns_vnet_join" {
   description          = "Allow private-dns pipeline SPN to link internal.hmcts.net zones to this VNet"
 }
 
-moved {
-  from = azurerm_role_assignment.private_dns_vnet_join
-  to   = azurerm_role_assignment.private_dns_vnet_join["b8f08f77-4ce2-43d5-a23b-c7ca735eca02"]
+resource "azurerm_role_assignment" "rbac" {
+  for_each             = local.role_assignments
+  scope                = each.value.scope
+  role_definition_name = each.value.role_definition_name
+  principal_id         = each.value.principal_id
 }
