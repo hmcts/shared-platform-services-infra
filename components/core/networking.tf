@@ -142,16 +142,6 @@ module "vnet_peer_hub" {
   }
 }
 
-moved {
-  from = module.vnet_peer_vpn.azurerm_virtual_network_peering.initiator_to_target
-  to   = module.vnet_peer_vpn[0].azurerm_virtual_network_peering.initiator_to_target
-}
-
-moved {
-  from = module.vnet_peer_vpn.azurerm_virtual_network_peering.target_to_initiator
-  to   = module.vnet_peer_vpn[0].azurerm_virtual_network_peering.target_to_initiator
-}
-
 module "vnet_peer_vpn" {
   source = "github.com/hmcts/terraform-module-vnet-peering?ref=master"
   count  = local.naming_env == "perftest" ? 0 : 1
