@@ -8,10 +8,56 @@ gateways:
       - certificate_name: wildcard-sandbox-api-hmcts-net
     app_configuration:
       - product: sps
-        component: api-mgmt-appgw
+        component: apim-gateway-public
         ssl_enabled: true
         use_public_ip: true
+        host_name_prefix: api
         health_path_override: "/status-0123456789abcdef"
         ssl_certificate_name: wildcard-sandbox-api-hmcts-net
-        host_name_suffix: sandbox.platform.hmcts.net
-        ssl_host_name_suffix: sandbox.platform.hmcts.net
+        host_name_suffix: sandbox.api.hmcts.net
+        ssl_host_name_suffix: sandbox.api.hmcts.net
+      - product: sps
+        component: apim-portal-public
+        ssl_enabled: true
+        use_public_ip: true
+        host_name_prefix: amp-portal
+        health_path_override: "/signin"
+        ssl_certificate_name: wildcard-sandbox-api-hmcts-net
+        host_name_suffix: sandbox.api.hmcts.net
+        ssl_host_name_suffix: sandbox.api.hmcts.net
+      - product: sps
+        component: apim-management-public
+        ssl_enabled: true
+        use_public_ip: true
+        host_name_prefix: management
+        health_path_override: "/ServiceStatus"
+        ssl_certificate_name: wildcard-sandbox-api-hmcts-net
+        host_name_suffix: sandbox.api.hmcts.net
+        ssl_host_name_suffix: sandbox.api.hmcts.net
+      - product: sps
+        component: apim-gateway-private
+        ssl_enabled: true
+        use_public_ip: false
+        host_name_prefix: api
+        health_path_override: "/status-0123456789abcdef"
+        ssl_certificate_name: wildcard-sandbox-api-hmcts-net
+        host_name_suffix: sandbox.api.hmcts.net
+        ssl_host_name_suffix: sandbox.api.hmcts.net
+      - product: sps
+        component: apim-portal-private
+        ssl_enabled: true
+        use_public_ip: false
+        host_name_prefix: amp-portal
+        health_path_override: "/signin"
+        ssl_certificate_name: wildcard-sandbox-api-hmcts-net
+        host_name_suffix: sandbox.api.hmcts.net
+        ssl_host_name_suffix: sandbox.api.hmcts.net
+      - product: sps
+        component: apim-management-private
+        ssl_enabled: true
+        use_public_ip: false
+        host_name_prefix: management
+        health_path_override: "/ServiceStatus"
+        ssl_certificate_name: wildcard-sandbox-api-hmcts-net
+        host_name_suffix: sandbox.api.hmcts.net
+        ssl_host_name_suffix: sandbox.api.hmcts.net
