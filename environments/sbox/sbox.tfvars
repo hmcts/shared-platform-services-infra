@@ -55,4 +55,10 @@ developer_portal = {
   cert_name          = "amp-portal-sandbox-api-hmcts-net"
 }
 
+management = {
+  custom_domain_name = "management.sandbox.api.hmcts.net"
+  key_vault_id       = "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/sps-platform-sbox-rg/providers/Microsoft.KeyVault/vaults/acmedtsspssbox"
+  cert_name          = "wildcard-sandbox-api-hmcts-net"
+}
+
 deploy_extid_rg = true
