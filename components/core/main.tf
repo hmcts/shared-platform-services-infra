@@ -17,6 +17,7 @@ resource "azurerm_resource_group" "this" {
 }
 
 resource "azurerm_resource_group" "extid" {
+  count    = var.deploy_extid_rg ? 1 : 0
   name     = "rg-${var.product}-extid-${local.naming_env}"
   location = var.location
   tags     = module.ctags.common_tags
