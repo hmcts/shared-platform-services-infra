@@ -164,6 +164,16 @@ variable "developer_portal" {
   default = {}
 }
 
+variable "management" {
+  description = "Configuration for the APIM management custom domain and certificate"
+  type = object({
+    custom_domain_name = optional(string)
+    key_vault_id       = optional(string)
+    cert_name          = optional(string)
+  })
+  default = {}
+}
+
 variable "deploy_extid_rg" {
   description = "Whether to deploy the external identity resource group"
   type        = bool

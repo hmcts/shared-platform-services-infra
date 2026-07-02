@@ -32,6 +32,11 @@ module "api-mgmt" {
       cert_name    = var.developer_portal.cert_name
     }
   }
+  management = {
+    fqdn         = var.management.custom_domain_name
+    key_vault_id = var.management.key_vault_id
+    cert_name    = var.management.cert_name
+  }
 }
 
 resource "azurerm_api_management_named_value" "environment" {
