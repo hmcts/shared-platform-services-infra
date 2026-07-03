@@ -179,3 +179,9 @@ variable "deploy_extid_rg" {
   type        = bool
   default     = false
 }
+
+variable "developers_group" {
+  description = "The name of the Azure AD group that will be granted access over infra."
+  type        = string
+  default     = "DTS AMp Developers"
+}

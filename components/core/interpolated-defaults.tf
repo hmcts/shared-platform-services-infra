@@ -10,6 +10,6 @@ data "azurerm_client_config" "current" {}
 data "azurerm_subscription" "current" {}
 
 data "azuread_group" "api_marketplace" {
-  display_name     = "DTS API Marketplace"
+  display_name     = var.developers_group
   security_enabled = true
 }
