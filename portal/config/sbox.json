@@ -1,0 +1,8 @@
+{
+  "_comment": "Sandbox environment-specific configuration for APIM developer portal deployment.",
+  "_description": "Add key/value pairs under 'substitutions' to replace placeholder strings in the exported portal content.json before uploading to the target APIM instance. Keys are the placeholder strings used in exported content; values are the environment-specific replacements.",
+  "apim_portal_url": "https://amp-portal.sandbox.api.hmcts.net",
+  "environment_display_name": "Sandbox",
+  "substitutions": {
+  }
+}
