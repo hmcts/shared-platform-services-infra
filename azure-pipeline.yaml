@@ -66,7 +66,6 @@ parameters:
           - resource_group_name
           - vnet_name
       - deployment: "apim" # This is the name of the component's directory under /components
-        environment: "sbox"
         depends_on: "core"
         required_inputs:
           - name: resource_group_name
@@ -79,7 +78,6 @@ parameters:
           - resource_group_name
         pipeline_tests: false
       - deployment: "apim_appgw"
-        environment: "sbox"
         depends_on: "apim"
         depends_on_extra:
           - core
