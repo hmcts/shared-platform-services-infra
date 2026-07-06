@@ -1,6 +1,6 @@
 locals {
-  vnet_rg   = "rg-${var.product}-${var.env}"
-  vnet_name = "${var.product}-networking-vnet-${var.env}"
+  vnet_rg   = coalesce(var.resource_group_name, "rg-${var.product}-${var.env}")
+  vnet_name = coalesce(var.vnet_name, "${var.product}-networking-vnet-${var.env}")
 
   sps_infra_supernet = "10.180.0.0/16"
   normalized_env     = var.env == "preview" ? "dev" : var.env == "perftest" ? "test" : var.env == "aat" ? "stg" : var.env

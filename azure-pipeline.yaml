@@ -63,16 +63,33 @@ parameters:
           - resource_group
           - vnet_id
           - subnet_ids
+          - resource_group_name
+          - vnet_name
       - deployment: "apim" # This is the name of the component's directory under /components
         environment: "sbox"
         depends_on: "core"
+        required_inputs:
+          - name: resource_group_name
+            from: core
+          - name: vnet_name
+            from: core
         required_outputs:
+          - apim_private_ip_address
           - apim_name
           - resource_group_name
         pipeline_tests: false
       - deployment: "apim_appgw"
         environment: "sbox"
         depends_on: "apim"
+        depends_on_extra:
+          - core
+        required_inputs:
+          - name: resource_group_name
+            from: core
+          - name: vnet_name
+            from: core
+          - name: apim_private_ip_address
+            from: apim
         pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
       #

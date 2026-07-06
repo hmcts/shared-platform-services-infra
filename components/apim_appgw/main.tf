@@ -38,8 +38,8 @@ module "app-gw" {
   backend_pool_ip_addresses                    = [local.apim_private_ip]
   backend_pool_fqdns                           = var.apim_appgw_backend_pool_fqdns
   vault_name                                   = local.key_vault_name
-  vnet_rg                                      = "rg-${var.product}-${var.env}"
-  vnet_name                                    = "${var.product}-networking-vnet-${var.env}"
+  vnet_rg                                      = coalesce(var.resource_group_name, "rg-${var.product}-${var.env}")
+  vnet_name                                    = coalesce(var.vnet_name, "${var.product}-networking-vnet-${var.env}")
   common_tags                                  = module.ctags.common_tags
   log_analytics_workspace_id                   = module.logworkspace.workspace_id
   key_vault_resource_group                     = local.key_vault_resource_group
