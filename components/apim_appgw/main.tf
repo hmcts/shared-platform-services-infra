@@ -12,8 +12,6 @@ module "logworkspace" {
 
 }
 
-data "azurerm_subscription" "current" {}
-
 locals {
   key_vault_name = "acmedtssps${var.subscription}"
   dns_zone       = (var.env == "sbox") ? "sandbox" : var.env
@@ -37,11 +35,11 @@ module "app-gw" {
   env                                          = local.dns_zone
   location                                     = var.location
   private_ip_address                           = var.hub_app_gw_private_ip_address
-  backend_pool_ip_addresses                    = var.apim_appgw_backend_pool_ips
+  backend_pool_ip_addresses                    = [var.apim_private_ip_address]
   backend_pool_fqdns                           = var.apim_appgw_backend_pool_fqdns
   vault_name                                   = local.key_vault_name
-  vnet_rg                                      = "rg-${var.product}-${var.env}"
-  vnet_name                                    = "${var.product}-networking-vnet-${var.env}"
+  vnet_rg                                      = var.resource_group_name
+  vnet_name                                    = var.vnet_name
   common_tags                                  = module.ctags.common_tags
   log_analytics_workspace_id                   = module.logworkspace.workspace_id
   key_vault_resource_group                     = local.key_vault_resource_group

@@ -58,21 +58,41 @@ parameters:
           - resource_group
           - vnet_id
           - subnet_ids
+          - resource_group_name
+          - vnet_name
       - deployment: "apim" # This is the name of the component's directory under /components
         environment: "sbox"
         depends_on: "core"
+        required_inputs:
+          - name: resource_group_name
+            from: core
+          - name: vnet_name
+            from: core
+        required_outputs:
+          - apim_private_ip_address
         pipeline_tests: false
       - deployment: "apim_appgw"
         environment: "sbox"
         depends_on: "apim"
+        depends_on_extra:
+          - core
+        required_inputs:
+          - name: resource_group_name
+            from: core
+          - name: vnet_name
+            from: core
+          - name: apim_private_ip_address
+            from: apim
         pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
       #
       # - deployment: 'app_gateway'
       #   depends_on: 'core'              # ensures core is deployed first in the same env
-      #   required_inputs:                # names of outputs from depends_on to consume; set as TF_VAR_ env vars
-      #     - resource_group_name         # → TF_VAR_resource_group_name
-      #     - subnet_id_app_gateway       # → TF_VAR_subnet_id_app_gateway
+      #   required_inputs:                # outputs from upstream components to consume as TF_VAR_ env vars
+      #     - name: resource_group_name
+      #       from: core                  # source component stage in same env
+      #     - name: subnet_id_app_gateway
+      #       from: network
 
 variables:
   - name: timeoutInMinutes
@@ -107,6 +127,9 @@ stages:
             # Component dependency — prerequisite component in the same environment
             - ${{ if deployment.depends_on }}:
               - ${{ env.name }}_${{ deployment.depends_on }}
+            - ${{ if deployment.depends_on_extra }}:
+              - ${{ each dep in deployment.depends_on_extra }}:
+                - ${{ env.name }}_${{ dep }}
             # Environment dependency — same component in the prerequisite environment
             - ${{ if eq(env.depends_on, 'Precheck') }}:
               - Precheck
@@ -123,7 +146,7 @@ stages:
               ${{ if deployment.required_inputs }}:
                 variables:
                   ${{ each input in deployment.required_inputs }}:
-                    TF_VAR_${{ input }}: $[ stageDependencies.${{ env.name }}_${{ deployment.depends_on }}.TerraformPlanApply.outputs['CaptureOutputs.${{ input }}'] ]
+                    TF_VAR_${{ input.name }}: $[ stageDependencies.${{ env.name }}_${{ input.from }}.TerraformPlanApply.outputs['CaptureOutputs.${{ input.name }}'] ]
               steps:
                 - template: steps/terraform.yaml@cnp-azuredevops-libraries
                   parameters:

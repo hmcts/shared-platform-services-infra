@@ -12,3 +12,11 @@ output "vnet_id" {
 output "subnet_ids" {
   value = module.networking.subnet_ids
 }
+
+output "resource_group_name" {
+  value = azurerm_resource_group.this.name
+}
+
+output "vnet_name" {
+  value = module.networking.vnet_names["vnet"]
+}
