@@ -25,9 +25,9 @@ portal/
 │   ├── demo.json
 │   ├── stg.json
 │   └── prod.json
-└── scripts/
-    ├── export-portal.ps1   # Extracts portal content from a live APIM instance
-    └── deploy-portal.ps1   # Imports portal content into a target APIM instance
+├── scripts/
+    ├── export-portal.sh    # Extracts portal content from a live APIM instance
+    └── deploy-portal.sh    # Imports portal content into a target APIM instance
 ```
 
 ---
@@ -50,7 +50,11 @@ responsible for the infrastructure layer only.
 ## Prerequisites
 
 - **Azure CLI** 2.30 or later — `az --version`
-- PowerShell Core (pwsh) 7.x — `pwsh --version`
+  - macOS: `brew install azure-cli`
+  - Linux: see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+- **jq** — `jq --version`
+  - macOS: `brew install jq`
+  - Linux: `apt install jq` / `yum install jq`
 - **API Management Service Contributor** role on the APIM instance (for content and publish)
 - **Storage Blob Data Contributor** on the APIM-associated storage account (for media upload)
 - **Storage Blob Data Reader** on the APIM-associated storage account (for media export)
@@ -88,14 +92,14 @@ For sbox the values are:
 
 ### 3. Run the export script
 
-```powershell
+```bash
 cd portal/scripts
 
-.\export-portal.ps1 `
-    -Environment       sbox `
-    -SubscriptionId    "bd2864ed-4f3e-45ed-9c6a-8d179674bab1" `
-    -ResourceGroupName "rg-sps-platform-sbox" `
-    -ApimName          "sps-api-mgmt-sbox"
+./export-portal.sh \
+    -e sbox \
+    -s "bd2864ed-4f3e-45ed-9c6a-8d179674bab1" \
+    -g "rg-sps-platform-sbox" \
+    -n "sps-api-mgmt-sbox"
 ```
 
 ### 4. Review and commit the artifacts
@@ -174,18 +178,18 @@ deployDeveloperPortal: true
 
 ## Running the deploy script locally
 
-```powershell
+```bash
 az login
 az account set --subscription "bd2864ed-4f3e-45ed-9c6a-8d179674bab1"
 
 cd portal/scripts
 
-.\deploy-portal.ps1 `
-    -Environment       sbox `
-    -SubscriptionId    "bd2864ed-4f3e-45ed-9c6a-8d179674bab1" `
-    -ResourceGroupName "rg-sps-platform-sbox" `
-    -ApimName          "sps-api-mgmt-sbox" `
-    -Publish
+./deploy-portal.sh \
+    -e sbox \
+    -s "bd2864ed-4f3e-45ed-9c6a-8d179674bab1" \
+    -g "rg-sps-platform-sbox" \
+    -n "sps-api-mgmt-sbox" \
+    -p
 ```
 
 ---

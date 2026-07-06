@@ -199,13 +199,13 @@ stages:
                   displayName: 'Deploy APIM Developer Portal'
                   inputs:
                     azureSubscription: ${{ env.service_connection }}
-                    scriptType: pscore
+                    scriptType: bash
                     scriptLocation: scriptPath
-                    scriptPath: $(Build.SourcesDirectory)/shared-platform-services-infra/portal/scripts/deploy-portal.ps1
+                    scriptPath: $(Build.SourcesDirectory)/shared-platform-services-infra/portal/scripts/deploy-portal.sh
                     arguments: >-
-                      -Environment ${{ env.name }}
-                      -ResourceGroupName $(resourceGroupName)
-                      -ApimName $(apimName)
-                      -ArtifactsPath $(Build.SourcesDirectory)/shared-platform-services-infra/portal/artifacts
-                      -ConfigPath $(Build.SourcesDirectory)/shared-platform-services-infra/portal/config
-                      -Publish
+                      -e ${{ env.name }}
+                      -g $(resourceGroupName)
+                      -n $(apimName)
+                      -a $(Build.SourcesDirectory)/shared-platform-services-infra/portal/artifacts
+                      -c $(Build.SourcesDirectory)/shared-platform-services-infra/portal/config
+                      -p
