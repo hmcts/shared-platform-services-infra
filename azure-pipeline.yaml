@@ -181,8 +181,23 @@ stages:
                               inlineScript: |
                                 set -euo pipefail
                                 COMPONENT_DIR="$(Build.SourcesDirectory)/shared-platform-services-infra/components/${{ deployment.deployment }}"
+                                OUTPUTS_JSON="{}"
+
+                                if RAW_OUTPUTS="$(terraform -chdir="$COMPONENT_DIR" output -json 2>/dev/null)"; then
+                                  if echo "$RAW_OUTPUTS" | jq -e . >/dev/null 2>&1; then
+                                    OUTPUTS_JSON="$RAW_OUTPUTS"
+                                  fi
+                                else
+                                  echo "No terraform outputs available yet for ${{ deployment.deployment }}; publishing empty output variables."
+                                fi
+
                                 for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
-                                  VALUE=$(terraform -chdir="$COMPONENT_DIR" output -json "$OUTPUT_NAME" | jq -cr '.')
+                                  if echo "$OUTPUTS_JSON" | jq -e --arg name "$OUTPUT_NAME" 'has($name)' >/dev/null 2>&1; then
+                                    VALUE=$(echo "$OUTPUTS_JSON" | jq -cr --arg name "$OUTPUT_NAME" '.[$name].value')
+                                  else
+                                    echo "Output '$OUTPUT_NAME' is not present yet for ${{ deployment.deployment }}; publishing empty value."
+                                    VALUE=""
+                                  fi
                                   echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
                                 done
 
