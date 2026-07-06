@@ -35,11 +35,11 @@ module "app-gw" {
   env                                          = local.dns_zone
   location                                     = var.location
   private_ip_address                           = var.hub_app_gw_private_ip_address
-  backend_pool_ip_addresses                    = [var.apim_private_ip_address]
+  backend_pool_ip_addresses                    = [local.apim_private_ip]
   backend_pool_fqdns                           = var.apim_appgw_backend_pool_fqdns
   vault_name                                   = local.key_vault_name
-  vnet_rg                                      = var.resource_group_name
-  vnet_name                                    = var.vnet_name
+  vnet_rg                                      = "rg-${var.product}-${var.env}"
+  vnet_name                                    = "${var.product}-networking-vnet-${var.env}"
   common_tags                                  = module.ctags.common_tags
   log_analytics_workspace_id                   = module.logworkspace.workspace_id
   key_vault_resource_group                     = local.key_vault_resource_group
