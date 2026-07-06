@@ -1,0 +1,51 @@
+{
+  "signin": {
+    "id": "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/rg-sps-platform-sbox/providers/Microsoft.ApiManagement/service/sps-api-mgmt-sbox/portalsettings/signin",
+    "name": "signin",
+    "properties": {
+      "enabled": true,
+      "subscriptions": null,
+      "termsOfService": null,
+      "url": null,
+      "userRegistration": null,
+      "validationKey": null,
+      "validationSecondaryKey": null
+    },
+    "type": "Microsoft.ApiManagement/service/portalsettings"
+  },
+  "signup": {
+    "id": "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/rg-sps-platform-sbox/providers/Microsoft.ApiManagement/service/sps-api-mgmt-sbox/portalsettings/signup",
+    "name": "signup",
+    "properties": {
+      "enabled": false,
+      "subscriptions": null,
+      "termsOfService": {
+        "consentRequired": false,
+        "enabled": false,
+        "text": ""
+      },
+      "url": null,
+      "userRegistration": null,
+      "validationKey": null,
+      "validationSecondaryKey": null
+    },
+    "type": "Microsoft.ApiManagement/service/portalsettings"
+  },
+  "delegation": {
+    "id": "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/rg-sps-platform-sbox/providers/Microsoft.ApiManagement/service/sps-api-mgmt-sbox/portalsettings/delegation",
+    "name": "delegation",
+    "properties": {
+      "enabled": false,
+      "subscriptions": {
+        "enabled": false
+      },
+      "termsOfService": null,
+      "url": "",
+      "userRegistration": {
+        "enabled": false
+      },
+      "validationKey": null
+    },
+    "type": "Microsoft.ApiManagement/service/portalsettings"
+  }
+}
