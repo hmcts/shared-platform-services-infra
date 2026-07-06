@@ -1,0 +1,8 @@
+{
+  "_comment": "Staging (aat) environment-specific configuration for APIM developer portal deployment.",
+  "_description": "Add key/value pairs under 'substitutions' to replace placeholder strings in the exported portal content.json before uploading to the target APIM instance.",
+  "apim_portal_url": "",
+  "environment_display_name": "Staging",
+  "substitutions": {
+  }
+}
