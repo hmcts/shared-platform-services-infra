@@ -1,0 +1,4 @@
+# This directory holds exported APIM developer portal artifacts.
+# Run portal/scripts/export-portal.ps1 to populate it from an existing APIM instance.
+# The exported content.json, portalsettings.json, and any media files stored here
+# are deployed to target environments by portal/scripts/deploy-portal.ps1 via CI/CD.
