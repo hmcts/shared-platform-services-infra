@@ -39,7 +39,7 @@ resource "azurerm_resource_group" "extid" {
 
 resource "azurerm_key_vault" "extid" {
   count                      = var.deploy_extid_rg ? 1 : 0
-  name                       = "kv-${var.product}-extid-${local.naming_env}"
+  name                       = "kvspsextid${local.naming_env}"
   location                   = azurerm_resource_group.extid[0].location
   resource_group_name        = azurerm_resource_group.extid[0].name
   tenant_id                  = data.azurerm_client_config.current.tenant_id
