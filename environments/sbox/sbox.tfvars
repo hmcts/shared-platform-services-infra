@@ -36,6 +36,12 @@ cross_tenant_peering = {
       vnet_name   = "VN-STE-SVC-01"
       rg_name     = "RG-STE-SVC-01"
     }
+    "vn-dev-svc-01" = {
+      source_name = "sps-platform-networking-vnet-sbox-to-cpp-nonlive-vn-dev-svc-01"
+      target_name = "cpp-nonlive-vn-dev-svc-01-to-sps-platform-networking-vnet-sbox"
+      vnet_name   = "VN-DEV-SVC-01"
+      rg_name     = "RG-DEV-SVC-01"
+    }
   }
 }
 
