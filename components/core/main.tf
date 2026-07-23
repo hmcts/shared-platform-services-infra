@@ -67,3 +67,14 @@ resource "azurerm_role_assignment" "rbac" {
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
 }
+
+resource "azurerm_storage_account" "api_state_store" {
+  name                     = "${var.product}${local.naming_env}state"
+  resource_group_name      = azurerm_resource_group.this.name
+  location                 = azurerm_resource_group.this.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  is_hns_enabled           = true
+
+  tags = module.ctags.common_tags
+}
