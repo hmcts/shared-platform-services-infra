@@ -24,7 +24,7 @@ module "api-mgmt" {
   cert_domain                          = "api"
   custom_top_level_domain              = "api.hmcts.net"
   developer_portal = {
-    sign_in_enabled = true
+    sign_in_enabled = false
     sign_up         = null
     custom_domain = {
       fqdn         = var.developer_portal.custom_domain_name
