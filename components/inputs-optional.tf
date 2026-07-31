@@ -185,3 +185,18 @@ variable "developers_group" {
   type        = string
   default     = "DTS AMp Developers"
 }
+
+variable "debug_vm" {
+  description = "Configuration for a temporary Ubuntu VM deployed into the private-endpoints subnet, for troubleshooting cross-tenant/cross-network connectivity. Not deployed by default — set enabled = true per-environment in tfvars. `image` defaults to Ubuntu 26.04 LTS — confirm the offer/sku are still current for the target region (e.g. `az vm image list --publisher Canonical --all --output table`) before relying on the defaults in a new environment."
+  type = object({
+    enabled = optional(bool, false)
+    size    = optional(string, "Standard_B2s")
+    image = optional(object({
+      publisher = optional(string, "Canonical")
+      offer     = optional(string, "ubuntu-26_04-lts")
+      sku       = optional(string, "server")
+      version   = optional(string, "latest")
+    }), {})
+  })
+  default = {}
+}
