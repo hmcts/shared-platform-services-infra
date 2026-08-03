@@ -1,3 +1,7 @@
+output "apim_private_ip_address" {
+  value = cidrhost(local.apim_subnet_cidr, 4)
+}
+
 output "apim_name" {
   description = "The name of the APIM service. Used by the portal deployment pipeline stage."
   value       = module.api-mgmt.name

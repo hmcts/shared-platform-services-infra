@@ -58,29 +58,46 @@ parameters:
   - name: environment_components
     type: object
     default:
-      - deployment: 'core'
+      - deployment: "core"
         required_outputs:
           - resource_group
           - vnet_id
           - subnet_ids
+          - resource_group_name
+          - vnet_name
       - deployment: "apim" # This is the name of the component's directory under /components
-        environment: "sbox"
         depends_on: "core"
-        pipeline_tests: false
+        required_inputs:
+          - name: resource_group_name
+            from: core
+          - name: vnet_name
+            from: core
         required_outputs:
+          - apim_private_ip_address
           - apim_name
           - resource_group_name
+        pipeline_tests: false
       - deployment: "apim_appgw"
-        environment: "sbox"
         depends_on: "apim"
+        depends_on_extra:
+          - core
+        required_inputs:
+          - name: resource_group_name
+            from: core
+          - name: vnet_name
+            from: core
+          - name: apim_private_ip_address
+            from: apim
         pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
       #
       # - deployment: 'app_gateway'
       #   depends_on: 'core'              # ensures core is deployed first in the same env
-      #   required_inputs:                # names of outputs from depends_on to consume; set as TF_VAR_ env vars
-      #     - resource_group_name         # → TF_VAR_resource_group_name
-      #     - subnet_id_app_gateway       # → TF_VAR_subnet_id_app_gateway
+      #   required_inputs:                # outputs from upstream components to consume as TF_VAR_ env vars
+      #     - name: resource_group_name
+      #       from: core                  # source component stage in same env
+      #     - name: subnet_id_app_gateway
+      #       from: network
 
 variables:
   - name: timeoutInMinutes
@@ -108,59 +125,79 @@ stages:
               overrideAction: ${{ parameters.overrideAction }}
 
   - ${{ each env in parameters.envs }}:
-    - ${{ each deployment in parameters.environment_components }}:
-      - ${{ if or(not(deployment.environment), eq(env.name, deployment.environment)) }}:
-        - stage: ${{ env.name }}_${{ deployment.deployment }}
-          dependsOn:
-            # Component dependency — prerequisite component in the same environment
-            - ${{ if deployment.depends_on }}:
-              - ${{ env.name }}_${{ deployment.depends_on }}
-            # Environment dependency — same component in the prerequisite environment
-            - ${{ if eq(env.depends_on, 'Precheck') }}:
-              - Precheck
-            - ${{ if ne(env.depends_on, 'Precheck') }}:
-              - ${{ env.depends_on }}_${{ deployment.deployment }}
-          jobs:
-            - job: TerraformPlanApply
-              pool:
-                vmImage: ${{ variables.agentImage }}
-              timeoutInMinutes: ${{ variables.timeoutInMinutes }}
-              # When a component consumes outputs from a dependency, map cross-stage
-              # output variables into this job as TF_VAR_ environment variables so
-              # terraform automatically picks them up without explicit -var flags.
-              ${{ if deployment.required_inputs }}:
-                variables:
-                  ${{ each input in deployment.required_inputs }}:
-                    TF_VAR_${{ input }}: $[ stageDependencies.${{ env.name }}_${{ deployment.depends_on }}.TerraformPlanApply.outputs['CaptureOutputs.${{ input }}'] ]
-              steps:
-                - template: steps/terraform.yaml@cnp-azuredevops-libraries
-                  parameters:
-                    overrideAction: ${{ parameters.overrideAction }}
-                    environment: ${{ env.name }}
-                    component: ${{ deployment.deployment }}
-                    serviceConnection: ${{ env.service_connection }}
-                    terraformInitSubscription: ${{ variables.terraformInitSubscription }}
-                    product: ${{ variables.product }}
-                    planCommandOptions: "-compact-warnings"
-                # After terraform completes, capture specified outputs and publish
-                # them as ADO output variables for downstream stages to consume
-                # via stageDependencies.
-                - ${{ if deployment.required_outputs }}:
-                  - task: AzureCLI@2
-                    name: CaptureOutputs
-                    displayName: 'Publish terraform outputs'
-                    inputs:
-                      azureSubscription: ${{ env.service_connection }}
-                      scriptType: bash
-                      scriptLocation: inlineScript
-                      addSpnToEnvironment: true
-                      inlineScript: |
-                        set -euo pipefail
-                        COMPONENT_DIR="$(Build.SourcesDirectory)/shared-platform-services-infra/components/${{ deployment.deployment }}"
-                        for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
-                          VALUE=$(terraform -chdir="$COMPONENT_DIR" output -json "$OUTPUT_NAME" | jq -cr '.')
-                          echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
-                        done
+      - ${{ each deployment in parameters.environment_components }}:
+          - ${{ if or(not(deployment.environment), eq(env.name, deployment.environment)) }}:
+              - stage: ${{ env.name }}_${{ deployment.deployment }}
+                dependsOn:
+                  # Component dependency — prerequisite component in the same environment
+                  - ${{ if deployment.depends_on }}:
+                      - ${{ env.name }}_${{ deployment.depends_on }}
+                  - ${{ if deployment.depends_on_extra }}:
+                      - ${{ each dep in deployment.depends_on_extra }}:
+                          - ${{ env.name }}_${{ dep }}
+                  # Environment dependency — same component in the prerequisite environment
+                  - ${{ if eq(env.depends_on, 'Precheck') }}:
+                      - Precheck
+                  - ${{ if ne(env.depends_on, 'Precheck') }}:
+                      - ${{ env.depends_on }}_${{ deployment.deployment }}
+                jobs:
+                  - job: TerraformPlanApply
+                    pool:
+                      vmImage: ${{ variables.agentImage }}
+                    timeoutInMinutes: ${{ variables.timeoutInMinutes }}
+                    # When a component consumes outputs from a dependency, map cross-stage
+                    # output variables into this job as TF_VAR_ environment variables so
+                    # terraform automatically picks them up without explicit -var flags.
+                    ${{ if deployment.required_inputs }}:
+                      variables:
+                        ${{ each input in deployment.required_inputs }}:
+                          TF_VAR_${{ input.name }}: $[ stageDependencies.${{ env.name }}_${{ input.from
+                            }}.TerraformPlanApply.outputs['CaptureOutputs.${{
+                            input.name }}'] ]
+                    steps:
+                      - template: steps/terraform.yaml@cnp-azuredevops-libraries
+                        parameters:
+                          overrideAction: ${{ parameters.overrideAction }}
+                          environment: ${{ env.name }}
+                          component: ${{ deployment.deployment }}
+                          serviceConnection: ${{ env.service_connection }}
+                          terraformInitSubscription: ${{ variables.terraformInitSubscription }}
+                          product: ${{ variables.product }}
+                          planCommandOptions: "-compact-warnings"
+                      # After terraform completes, capture specified outputs and publish
+                      # them as ADO output variables for downstream stages to consume
+                      # via stageDependencies.
+                      - ${{ if deployment.required_outputs }}:
+                          - task: AzureCLI@2
+                            name: CaptureOutputs
+                            displayName: "Publish terraform outputs"
+                            inputs:
+                              azureSubscription: ${{ env.service_connection }}
+                              scriptType: bash
+                              scriptLocation: inlineScript
+                              addSpnToEnvironment: true
+                              inlineScript: |
+                                set -euo pipefail
+                                COMPONENT_DIR="$(Build.SourcesDirectory)/shared-platform-services-infra/components/${{ deployment.deployment }}"
+                                OUTPUTS_JSON="{}"
+
+                                if RAW_OUTPUTS="$(terraform -chdir="$COMPONENT_DIR" output -json 2>/dev/null)"; then
+                                  if echo "$RAW_OUTPUTS" | jq -e . >/dev/null 2>&1; then
+                                    OUTPUTS_JSON="$RAW_OUTPUTS"
+                                  fi
+                                else
+                                  echo "No terraform outputs available yet for ${{ deployment.deployment }}; publishing empty output variables."
+                                fi
+
+                                for OUTPUT_NAME in ${{ join(' ', deployment.required_outputs) }}; do
+                                  if echo "$OUTPUTS_JSON" | jq -e --arg name "$OUTPUT_NAME" 'has($name)' >/dev/null 2>&1; then
+                                    VALUE=$(echo "$OUTPUTS_JSON" | jq -cr --arg name "$OUTPUT_NAME" '.[$name].value')
+                                  else
+                                    echo "Output '$OUTPUT_NAME' is not present yet for ${{ deployment.deployment }}; publishing empty value."
+                                    VALUE=""
+                                  fi
+                                  echo "##vso[task.setvariable variable=${OUTPUT_NAME};isOutput=true]${VALUE}"
+                                done
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Developer Portal deployment stages
@@ -179,33 +216,35 @@ stages:
   #      updating the service_connection reference.
   # ─────────────────────────────────────────────────────────────────────────────
   - ${{ if and(parameters.deployDeveloperPortal, eq(parameters.overrideAction, 'apply')) }}:
-    - ${{ each env in parameters.envs }}:
-      - ${{ if eq(env.name, 'sbox') }}:
-        - stage: ${{ env.name }}_apim_portal
-          displayName: '${{ env.name }}: APIM Developer Portal'
-          dependsOn: ${{ env.name }}_apim
-          condition: succeeded('${{ env.name }}_apim')
-          variables:
-            apimName: $[ stageDependencies.${{ env.name }}_apim.TerraformPlanApply.outputs['CaptureOutputs.apim_name'] ]
-            resourceGroupName: $[ stageDependencies.${{ env.name }}_apim.TerraformPlanApply.outputs['CaptureOutputs.resource_group_name'] ]
-          jobs:
-            - job: DeployPortal
-              pool:
-                vmImage: ${{ variables.agentImage }}
-              timeoutInMinutes: ${{ variables.timeoutInMinutes }}
-              steps:
-                - checkout: self
-                - task: AzureCLI@2
-                  displayName: 'Deploy APIM Developer Portal'
-                  inputs:
-                    azureSubscription: ${{ env.service_connection }}
-                    scriptType: bash
-                    scriptLocation: scriptPath
-                    scriptPath: $(Build.SourcesDirectory)/portal/scripts/deploy-portal.sh
-                    arguments: >-
-                      -e ${{ env.name }}
-                      -g $(resourceGroupName)
-                      -n $(apimName)
-                      -a $(Build.SourcesDirectory)/portal/artifacts
-                      -c $(Build.SourcesDirectory)/portal/config
-                      -p
+      - ${{ each env in parameters.envs }}:
+          - ${{ if eq(env.name, 'sbox') }}:
+              - stage: ${{ env.name }}_apim_portal
+                displayName: "${{ env.name }}: APIM Developer Portal"
+                dependsOn: ${{ env.name }}_apim
+                condition: succeeded('${{ env.name }}_apim')
+                variables:
+                  apimName: $[ stageDependencies.${{ env.name
+                    }}_apim.TerraformPlanApply.outputs['CaptureOutputs.apim_name']
+                    ]
+                  resourceGroupName: $[ stageDependencies.${{ env.name
+                    }}_apim.TerraformPlanApply.outputs['CaptureOutputs.resource_group_name']
+                    ]
+                jobs:
+                  - job: DeployPortal
+                    pool:
+                      vmImage: ${{ variables.agentImage }}
+                    timeoutInMinutes: ${{ variables.timeoutInMinutes }}
+                    steps:
+                      - checkout: self
+                      - task: AzureCLI@2
+                        displayName: "Deploy APIM Developer Portal"
+                        inputs:
+                          azureSubscription: ${{ env.service_connection }}
+                          scriptType: bash
+                          scriptLocation: scriptPath
+                          scriptPath: $(Build.SourcesDirectory)/portal/scripts/deploy-portal.sh
+                          arguments: >-
+                            -e ${{ env.name }} -g $(resourceGroupName) -n
+                            $(apimName) -a
+                            $(Build.SourcesDirectory)/portal/artifacts -c
+                            $(Build.SourcesDirectory)/portal/config -p
