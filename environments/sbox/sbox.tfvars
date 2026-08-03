@@ -74,3 +74,10 @@ deploy_extid_rg = true
 debug_vm = {
   enabled = true
 }
+
+apim_diagnostic_settings = {
+  frontend_request_body_bytes  = 8192
+  frontend_response_body_bytes = 8192
+  backend_request_body_bytes   = 8192
+  backend_response_body_bytes  = 8192
+}

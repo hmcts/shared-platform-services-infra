@@ -37,6 +37,7 @@ module "api-mgmt" {
     key_vault_id = var.management.key_vault_id
     cert_name    = var.management.cert_name
   }
+  apim_diagnostic_settings = var.apim_diagnostic_settings
 }
 
 resource "azurerm_api_management_named_value" "environment" {
