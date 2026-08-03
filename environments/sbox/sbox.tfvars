@@ -68,3 +68,9 @@ management = {
 }
 
 deploy_extid_rg = true
+
+# Temporary VM in the private-endpoints subnet, for troubleshooting the
+# cross-tenant CNP<->CPP peering (see cross_tenant_peering above).
+debug_vm = {
+  enabled = true
+}
