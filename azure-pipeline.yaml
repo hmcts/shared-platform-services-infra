@@ -48,12 +48,12 @@ parameters:
       - name: demo
         service_connection: "DTS-SPS-DEMO"
         depends_on: Precheck
-      #- name: stg
-      #  service_connection: "DTS-SPS-STG"
-      #  depends_on: Precheck
-      #- name: prod
-      #  service_connection: "DTS-SPS-PROD"
-      #  depends_on: Precheck
+      - name: stg
+        service_connection: "DTS-SPS-STG"
+        depends_on: Precheck
+      - name: prod
+        service_connection: "DTS-SPS-PROD"
+        depends_on: Precheck
 
   - name: environment_components
     type: object

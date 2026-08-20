@@ -31,13 +31,8 @@ variable "destinations" { default = {} }
 variable "frontends" { default = {} }
 variable "private_ip_address" { default = "" }
 
-variable "traffic_manager_endpoints" { default = {} }
-variable "traffic_manager_profiles" { default = {} }
-variable "shutter_rg" { default = "" }
-variable "cdn_sku" { default = "" }
 variable "department" { default = "sps" }
 variable "apim_sku_name" { default = "Developer" }
-variable "hub" { default = "sbox" }
 variable "ssl_policy" { default = null }
 
 variable "key_vault_subscription" {
@@ -212,6 +207,15 @@ variable "apim_diagnostic_settings" {
     frontend_response_body_bytes = optional(number, 0)
     backend_request_body_bytes   = optional(number, 0)
     backend_response_body_bytes  = optional(number, 0)
+  })
+  default = {}
+}
+
+variable "identity_provider" {
+  description = "Configuration for the APIM identity provider"
+  type = object({
+    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")
+    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")
   })
   default = {}
 }

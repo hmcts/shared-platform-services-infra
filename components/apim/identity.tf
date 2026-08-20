@@ -6,12 +6,12 @@ data "azurerm_key_vault" "central_app_registration" {
 }
 
 data "azurerm_key_vault_secret" "entra_id_app_id" {
-  name         = "api-marketplace-apim-nonprod-app-id"
+  name         = var.identity_provider.app_id_secret_name
   key_vault_id = data.azurerm_key_vault.central_app_registration.id
 }
 
 data "azurerm_key_vault_secret" "entra_id_app_secret" {
-  name         = "api-marketplace-apim-nonprod-secret"
+  name         = var.identity_provider.app_secret_secret_name
   key_vault_id = data.azurerm_key_vault.central_app_registration.id
 }
 
