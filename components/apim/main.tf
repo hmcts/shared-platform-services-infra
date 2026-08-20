@@ -38,6 +38,9 @@ module "api-mgmt" {
     cert_name    = var.management.cert_name
   }
   apim_diagnostic_settings = var.apim_diagnostic_settings
+  acme_environment         = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
+  acme_rg_name             = contains(["dev", "test"], var.env) ? "sps-platform-${var.env}-rg" : null
+  key_vault_environment    = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
 }
 
 resource "azurerm_api_management_named_value" "environment" {
@@ -46,6 +49,8 @@ resource "azurerm_api_management_named_value" "environment" {
   api_management_name = module.api-mgmt.name
   display_name        = "environment"
   value               = var.env
+
+  depends_on = [module.api-mgmt]
 }
 
 data "azurerm_key_vault_certificate" "portal" {
