@@ -46,6 +46,8 @@ resource "azurerm_api_management_named_value" "environment" {
   api_management_name = module.api-mgmt.name
   display_name        = "environment"
   value               = var.env
+
+  depends_on = [module.api-mgmt]
 }
 
 data "azurerm_key_vault_certificate" "portal" {
