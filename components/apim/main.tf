@@ -38,6 +38,7 @@ module "api-mgmt" {
     cert_name    = var.management.cert_name
   }
   apim_diagnostic_settings = var.apim_diagnostic_settings
+  acme_environment         = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
 }
 
 resource "azurerm_api_management_named_value" "environment" {
