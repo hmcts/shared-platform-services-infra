@@ -40,6 +40,7 @@ module "api-mgmt" {
   apim_diagnostic_settings = var.apim_diagnostic_settings
   acme_environment         = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
   acme_rg_name             = contains(["dev", "test"], var.env) ? "sps-platform-${var.env}-rg" : null
+  key_vault_environment    = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
 }
 
 resource "azurerm_api_management_named_value" "environment" {
