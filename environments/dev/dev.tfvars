@@ -27,6 +27,18 @@ networking = {
   vpn = {}
 }
 
+developer_portal = {
+  custom_domain_name = "amp-portal.preview.api.hmcts.net"
+  key_vault_id       = "/subscriptions/7cfd7e05-06a1-4d9b-a426-db304bc99aab/resourceGroups/sps-platform-dev-rg/providers/Microsoft.KeyVault/vaults/acmedtsspspreview"
+  cert_name          = "amp-portal-preview-api-hmcts-net"
+}
+
+management = {
+  custom_domain_name = "management.preview.api.hmcts.net"
+  key_vault_id       = "/subscriptions/7cfd7e05-06a1-4d9b-a426-db304bc99aab/resourceGroups/sps-platform-dev-rg/providers/Microsoft.KeyVault/vaults/acmedtsspspreview"
+  cert_name          = "wildcard-preview-api-hmcts-net"
+}
+
 deploy_extid_rg = false
 
 apim_diagnostic_settings = {

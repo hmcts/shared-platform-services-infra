@@ -27,6 +27,18 @@ networking = {
   vpn = {}
 }
 
+developer_portal = {
+  custom_domain_name = "amp-portal.perftest.api.hmcts.net"
+  key_vault_id       = "/subscriptions/4e0267c8-d18a-460b-8707-496f0b36954d/resourceGroups/sps-platform-test-rg/providers/Microsoft.KeyVault/vaults/acmedtsspsperftest"
+  cert_name          = "amp-portal-perftest-api-hmcts-net"
+}
+
+management = {
+  custom_domain_name = "management.perftest.api.hmcts.net"
+  key_vault_id       = "/subscriptions/4e0267c8-d18a-460b-8707-496f0b36954d/resourceGroups/sps-platform-test-rg/providers/Microsoft.KeyVault/vaults/acmedtsspsperftest"
+  cert_name          = "wildcard-perftest-api-hmcts-net"
+}
+
 deploy_extid_rg = false
 
 apim_diagnostic_settings = {
