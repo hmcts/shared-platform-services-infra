@@ -13,9 +13,9 @@ ssl_policy = {
   min_protocol_version = "TLSv1_2"
 }
 
-//hub_app_gw_private_ip_address = ["10.180.1.10"]
-//apim_appgw_backend_pool_ips   = ["10.180.0.4"]
-//apim_appgw_backend_pool_fqdns = []
+hub_app_gw_private_ip_address = ["10.180.5.10"]
+apim_appgw_backend_pool_ips   = ["10.180.4.4"]
+apim_appgw_backend_pool_fqdns = []
 
 networking = {
   hub = {
