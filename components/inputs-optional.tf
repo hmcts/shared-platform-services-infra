@@ -210,3 +210,12 @@ variable "apim_diagnostic_settings" {
   })
   default = {}
 }
+
+variable "identity_provider" {
+  description = "Configuration for the APIM identity provider"
+  type = object({
+    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")
+    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")
+  })
+  default = {}
+}

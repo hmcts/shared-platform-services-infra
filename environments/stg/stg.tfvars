@@ -36,3 +36,8 @@ apim_diagnostic_settings = {
   backend_request_body_bytes   = 8192
   backend_response_body_bytes  = 8192
 }
+
+identity_provider = {
+  app_id_secret_name     = "api-marketplace-apim-prod-app-id"
+  app_secret_secret_name = "api-marketplace-apim-prod-secret"
+}
