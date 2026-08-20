@@ -2,11 +2,6 @@ project      = "spshmcts"
 location     = "uksouth"
 env          = "sbox"
 subscription = "sbox"
-# product            = "sps"
-# builtFrom          = "hmcts/shared-platform-services-infra"
-cdn_sku      = "Standard_Verizon"
-sku_tier     = "Free"
-sku_size     = "Free"
 autoShutdown = true
 
 ssl_policy = {

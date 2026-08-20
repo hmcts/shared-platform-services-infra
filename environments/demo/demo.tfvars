@@ -2,9 +2,6 @@ project      = "spshmcts"
 location     = "uksouth"
 env          = "demo"
 subscription = "demo"
-cdn_sku      = "Standard_Verizon"
-sku_tier     = "Free"
-sku_size     = "Free"
 autoShutdown = true
 
 ssl_policy = {

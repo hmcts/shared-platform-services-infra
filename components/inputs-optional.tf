@@ -31,13 +31,8 @@ variable "destinations" { default = {} }
 variable "frontends" { default = {} }
 variable "private_ip_address" { default = "" }
 
-variable "traffic_manager_endpoints" { default = {} }
-variable "traffic_manager_profiles" { default = {} }
-variable "shutter_rg" { default = "" }
-variable "cdn_sku" { default = "" }
 variable "department" { default = "sps" }
 variable "apim_sku_name" { default = "Developer" }
-variable "hub" { default = "sbox" }
 variable "ssl_policy" { default = null }
 
 variable "key_vault_subscription" {
