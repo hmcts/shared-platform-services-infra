@@ -35,6 +35,7 @@ module "app-gw" {
   source                                       = "git::https://github.com/hmcts/terraform-module-apim-application-gateway.git?ref=DTSPO-31984-waf-changes"
   yaml_path                                    = "${path.cwd}/../../environments/${var.env}/apim_appgw_config.yaml"
   env                                          = local.dns_zone
+  custom_name                                  = "sps-api-mgmt-${var.subscription}"
   location                                     = var.location
   private_ip_address                           = var.hub_app_gw_private_ip_address
   backend_pool_ip_addresses                    = var.apim_appgw_backend_pool_ips
