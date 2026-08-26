@@ -14,11 +14,6 @@ module "logworkspace" {
 
 data "azurerm_subscription" "current" {}
 
-locals {
-  key_vault_name = "acmedtssps${var.subscription}"
-  dns_zone       = (var.env == "sbox") ? "sandbox" : var.env
-}
-
 moved {
   from = module.app-gw[0]
   to   = module.app-gw
@@ -42,12 +37,12 @@ module "app-gw" {
   backend_pool_ip_addresses                    = var.apim_appgw_backend_pool_ips
   backend_pool_fqdns                           = var.apim_appgw_backend_pool_fqdns
   vault_name                                   = local.key_vault_name
-  vnet_rg                                      = "rg-${var.product}-${var.env}"
-  vnet_name                                    = "${var.product}-networking-vnet-${var.env}"
+  vnet_rg                                      = "rg-${var.product}-${var.subscription}"
+  vnet_name                                    = "${var.product}-networking-vnet-${var.subscription}"
   common_tags                                  = module.ctags.common_tags
   log_analytics_workspace_id                   = module.logworkspace.workspace_id
   key_vault_resource_group                     = local.key_vault_resource_group
-  subnet_name                                  = "${var.product}-networking-app-gateway-${var.env}"
+  subnet_name                                  = "${var.product}-networking-app-gateway-${var.subscription}"
   waf_mode                                     = var.waf_mode
   exclusions                                   = var.apim_appgw_exclusions
   public_ip_enable_multiple_availability_zones = true
