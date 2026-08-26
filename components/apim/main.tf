@@ -46,6 +46,17 @@ module "api-mgmt" {
   acme_environment         = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
   acme_rg_name             = contains(["dev", "test"], var.env) ? "sps-platform-${var.env}-rg" : null
   key_vault_environment    = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : null
+
+  certificates = {
+    "cpp-root" {
+      base64 = data.azurerm_key_vault_secret.base64_cpp_root_ca.value
+      store_name = "Root"
+    }
+    "cpp-intermediate" {
+      base64 = data.azurerm_key_vault_secret.base64_cpp_intermediate_ca.value
+      store_name = "CertificateAuthority"
+    }
+  }
 }
 
 resource "azurerm_api_management_named_value" "environment" {
@@ -62,4 +73,19 @@ data "azurerm_key_vault_certificate" "portal" {
   count        = var.developer_portal.custom_domain_name != null ? 1 : 0
   name         = var.developer_portal.cert_name
   key_vault_id = var.developer_portal.key_vault_id
+}
+
+data "azurerm_key_vault" "this" {
+  name                = "kvsps${var.subscription}"
+  resource_group_name = "rg-sps-platform-${var.subscription}"
+}
+
+data "azurerm_key_vault_secret" "base64_cpp_root_ca" {
+  name         = "base64-cpp-root-ca"
+  key_vault_id = data.azurerm_key_vault.this.id
+}
+
+data "azurerm_key_vault_secret" "base64_cpp_intermediate_ca" {
+  name         = "base64-cpp-intermediate-ca"
+  key_vault_id = data.azurerm_key_vault.this.id
 }

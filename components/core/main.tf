@@ -30,6 +30,19 @@ resource "azurerm_resource_group" "this" {
   tags     = module.ctags.common_tags
 }
 
+resource "azurerm_key_vault" "this" {
+  name                       = "kvsps${local.naming_env}"
+  location                   = azurerm_resource_group.this.location
+  resource_group_name        = azurerm_resource_group.this.name
+  tenant_id                  = data.azurerm_client_config.current.tenant_id
+  sku_name                   = "standard"
+  purge_protection_enabled   = true
+  soft_delete_retention_days = 90
+  rbac_authorization_enabled = true
+
+  tags = module.ctags.common_tags
+}
+
 resource "azurerm_resource_group" "extid" {
   count    = var.deploy_extid_rg ? 1 : 0
   name     = "rg-${var.product}-extid-${local.naming_env}"
