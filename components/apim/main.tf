@@ -76,7 +76,7 @@ data "azurerm_key_vault_certificate" "portal" {
 }
 
 data "azurerm_key_vault" "this" {
-  name                = "kvsps${var.subscription}"
+  name                = "kvspsplatform${var.subscription}"
   resource_group_name = "rg-sps-platform-${var.subscription}"
 }
 
