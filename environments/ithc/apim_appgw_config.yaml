@@ -3,7 +3,7 @@
 gateways:
   - gateway_configuration:
       exclude_env_in_app_name: true
-      private_ip_address: 10.180.1.10
+      private_ip_address: 10.180.13.10
     ssl_certificates:
       - certificate_name: wildcard-ithc-api-hmcts-net
     app_configuration:

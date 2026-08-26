@@ -70,7 +70,6 @@ parameters:
           - apim_name
           - resource_group_name
       - deployment: "apim_appgw"
-        environment: "sbox"
         depends_on: "apim"
         pipeline_tests: false
       # To add a component that consumes outputs from a prior component:
