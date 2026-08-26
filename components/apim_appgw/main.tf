@@ -19,10 +19,12 @@ locals {
   dns_zone       = (var.env == "sbox") ? "sandbox" : var.env
 }
 
+moved {
+  from = module.app-gw[0]
+  to   = module.app-gw
+}
+
 module "app-gw" {
-
-  count = var.env == "sbox" ? 1 : 0
-
   providers = {
     azurerm = azurerm
     # The App Gateway, VNet and subnet all live in the SPS subscription
