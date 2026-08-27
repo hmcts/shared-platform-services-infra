@@ -13,8 +13,7 @@ hub_app_gw_private_ip_address = ["10.180.25.10"]
 apim_appgw_backend_pool_ips   = ["10.180.24.4"]
 apim_appgw_backend_pool_fqdns = []
 
-# This should ideally be moved to "Premium" before this is used as a live service
-apim_sku_name = "Developer"
+apim_sku_name = "Premium"
 
 networking = {
   hub = {
