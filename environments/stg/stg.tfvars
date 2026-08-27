@@ -17,15 +17,15 @@ networking = {
 }
 
 developer_portal = {
-  custom_domain_name = "amp-portal.staging.api.hmcts.net"
+  custom_domain_name = "amp-portal.aat.api.hmcts.net"
   key_vault_id       = "/subscriptions/70bea6e3-384f-4cf4-b551-743a78d716cd/resourceGroups/sps-platform-stg-rg/providers/Microsoft.KeyVault/vaults/acmedtsspsstg"
-  cert_name          = "amp-portal-staging-api-hmcts-net"
+  cert_name          = "amp-portal-aat-api-hmcts-net"
 }
 
 management = {
-  custom_domain_name = "management.staging.api.hmcts.net"
+  custom_domain_name = "management.aat.api.hmcts.net"
   key_vault_id       = "/subscriptions/70bea6e3-384f-4cf4-b551-743a78d716cd/resourceGroups/sps-platform-stg-rg/providers/Microsoft.KeyVault/vaults/acmedtsspsstg"
-  cert_name          = "wildcard-staging-api-hmcts-net"
+  cert_name          = "wildcard-aat-api-hmcts-net"
 }
 
 deploy_extid_rg = true

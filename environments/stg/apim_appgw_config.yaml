@@ -5,7 +5,7 @@ gateways:
       exclude_env_in_app_name: true
       private_ip_address: 10.180.21.10
     ssl_certificates:
-      - certificate_name: wildcard-staging-api-hmcts-net
+      - certificate_name: wildcard-aat-api-hmcts-net
     app_configuration:
       - product: sps
         component: apim-gateway-public
@@ -14,9 +14,9 @@ gateways:
         use_public_ip: true
         host_name_prefix: sps-api-mgmt
         health_path_override: "/status-0123456789abcdef"
-        ssl_certificate_name: wildcard-staging-api-hmcts-net
-        host_name_suffix: staging.api.hmcts.net
-        ssl_host_name_suffix: staging.api.hmcts.net
+        ssl_certificate_name: wildcard-aat-api-hmcts-net
+        host_name_suffix: aat.api.hmcts.net
+        ssl_host_name_suffix: aat.api.hmcts.net
       - product: sps
         component: apim-portal-public
         ssl_enabled: true
@@ -24,9 +24,9 @@ gateways:
         use_public_ip: true
         host_name_prefix: amp-portal
         health_path_override: "/signin"
-        ssl_certificate_name: wildcard-staging-api-hmcts-net
-        host_name_suffix: staging.api.hmcts.net
-        ssl_host_name_suffix: staging.api.hmcts.net
+        ssl_certificate_name: wildcard-aat-api-hmcts-net
+        host_name_suffix: aat.api.hmcts.net
+        ssl_host_name_suffix: aat.api.hmcts.net
       - product: sps
         component: apim-management-public
         ssl_enabled: true
@@ -34,9 +34,9 @@ gateways:
         use_public_ip: true
         host_name_prefix: management
         health_path_override: "/ServiceStatus"
-        ssl_certificate_name: wildcard-staging-api-hmcts-net
-        host_name_suffix: staging.api.hmcts.net
-        ssl_host_name_suffix: staging.api.hmcts.net
+        ssl_certificate_name: wildcard-aat-api-hmcts-net
+        host_name_suffix: aat.api.hmcts.net
+        ssl_host_name_suffix: aat.api.hmcts.net
       - product: sps
         component: apim-gateway-private
         ssl_enabled: true
@@ -44,9 +44,9 @@ gateways:
         use_private_ip: true
         host_name_prefix: sps-api-mgmt
         health_path_override: "/status-0123456789abcdef"
-        ssl_certificate_name: wildcard-staging-api-hmcts-net
-        host_name_suffix: staging.api.hmcts.net
-        ssl_host_name_suffix: staging.api.hmcts.net
+        ssl_certificate_name: wildcard-aat-api-hmcts-net
+        host_name_suffix: aat.api.hmcts.net
+        ssl_host_name_suffix: aat.api.hmcts.net
       - product: sps
         component: apim-portal-private
         ssl_enabled: true
@@ -54,9 +54,9 @@ gateways:
         use_private_ip: true
         host_name_prefix: amp-portal
         health_path_override: "/signin"
-        ssl_certificate_name: wildcard-staging-api-hmcts-net
-        host_name_suffix: staging.api.hmcts.net
-        ssl_host_name_suffix: staging.api.hmcts.net
+        ssl_certificate_name: wildcard-aat-api-hmcts-net
+        host_name_suffix: aat.api.hmcts.net
+        ssl_host_name_suffix: aat.api.hmcts.net
       - product: sps
         component: apim-management-private
         ssl_enabled: true
@@ -64,6 +64,6 @@ gateways:
         use_private_ip: true
         host_name_prefix: management
         health_path_override: "/ServiceStatus"
-        ssl_certificate_name: wildcard-staging-api-hmcts-net
-        host_name_suffix: staging.api.hmcts.net
-        ssl_host_name_suffix: staging.api.hmcts.net
+        ssl_certificate_name: wildcard-aat-api-hmcts-net
+        host_name_suffix: aat.api.hmcts.net
+        ssl_host_name_suffix: aat.api.hmcts.net
