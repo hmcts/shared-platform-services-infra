@@ -91,3 +91,15 @@ resource "azurerm_storage_account" "api_state_store" {
 
   tags = module.ctags.common_tags
 }
+
+resource "azurerm_storage_container" "api_state_container" {
+  name                  = "terraform-state"
+  storage_account_id    = azurerm_storage_account.api_state_store.id
+  container_access_type = "private"
+}
+
+import {
+  for_each = var.env == "sbox" ? { "import" = true } : {}
+  to       = azurerm_storage_container.api_state_container
+  id       = "${azurerm_storage_account.api_state_store.id}/blobServices/default/containers/terraform-state"
+}
