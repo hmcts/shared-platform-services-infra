@@ -1,9 +1,8 @@
 locals {
   naming_env = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : var.env == "stg" ? "aat" : var.env
 
-  api_marketplace_reader_envs      = toset(["dev", "test", "stg"])
-  api_marketplace_custom_role_envs = toset(["dev", "test"])
-  api_marketplace_contributor_envs = toset(["sbox"])
+  is_prod = var.env == "prod" || var.env == "stg"
+  is_sbox = var.env == "sbox"
 
   # azure-private-dns uses a different service connection in sandbox.
   private_dns_pipeline_principal_ids = var.env == "sbox" ? toset([
@@ -13,57 +12,34 @@ locals {
     "b8f08f77-4ce2-43d5-a23b-c7ca735eca02"
   ])
 
+  amp_role_assignment = {
+    "api_marketplace_${local.is_sbox ? "contributor" : "reader"}" = {
+      scope                = azurerm_resource_group.this.id
+      role_definition_name = local.is_sbox ? "Contributor" : "Reader"
+      principal_id         = data.azuread_group.api_marketplace.object_id
+    }
+  }
+
+  amp_extid_default_role_assignment = merge(var.deploy_extid_rg ? {
+    "api_marketplace-extid-${local.is_sbox ? "contributor" : "reader"}" = {
+      scope                = azurerm_resource_group.extid[0].id
+      role_definition_name = local.is_sbox ? "Contributor" : "Reader"
+      principal_id         = data.azuread_group.api_marketplace.object_id
+    }
+  } : {}, {})
+
+  amp_apim_subscription_key_reader_role_assignment = merge(!local.is_prod && !local.is_sbox ? {
+    "api_marketplace-apim-sub-key-reader" = {
+      scope                = azurerm_resource_group.this.id
+      role_definition_name = "APIM Subscription Key Reader"
+      principal_id         = data.azuread_group.api_marketplace.object_id
+    }
+  } : {}, {})
+
   role_assignments = merge(
-    # Contributor in sbox only
-    (var.env != "prod" && contains(local.api_marketplace_contributor_envs, var.env)) ? {
-      "api_marketplace-apim-contributor" = {
-        scope                = azurerm_resource_group.this.id
-        role_definition_name = "Contributor"
-        principal_id         = data.azuread_group.api_marketplace.object_id
-      }
-    } : {},
-
-    (var.deploy_extid_rg && var.env != "prod" && contains(local.api_marketplace_contributor_envs, var.env)) ? {
-      "api_marketplace-extid-contributor" = {
-        scope                = azurerm_resource_group.extid[0].id
-        role_definition_name = "Contributor"
-        principal_id         = data.azuread_group.api_marketplace.object_id
-      }
-    } : {},
-
-    # Reader in dev/test/stg (not sbox)
-    (var.env != "prod" && contains(local.api_marketplace_reader_envs, var.env)) ? {
-      "api_marketplace-apim-reader" = {
-        scope                = azurerm_resource_group.this.id
-        role_definition_name = "Reader"
-        principal_id         = data.azuread_group.api_marketplace.object_id
-      }
-    } : {},
-
-    (var.deploy_extid_rg && var.env != "prod" && contains(local.api_marketplace_reader_envs, var.env)) ? {
-      "api_marketplace-extid-reader" = {
-        scope                = azurerm_resource_group.extid[0].id
-        role_definition_name = "Reader"
-        principal_id         = data.azuread_group.api_marketplace.object_id
-      }
-    } : {},
-
-    # Extra custom role in dev/test only
-    (var.env != "prod" && contains(local.api_marketplace_custom_role_envs, var.env)) ? {
-      "api_marketplace-apim-sub-key-reader" = {
-        scope                = azurerm_resource_group.this.id
-        role_definition_name = "APIM Subscription Key Reader"
-        principal_id         = data.azuread_group.api_marketplace.object_id
-      }
-    } : {},
-
-    (var.deploy_extid_rg && var.env != "prod" && contains(local.api_marketplace_custom_role_envs, var.env)) ? {
-      "api_marketplace-extid-sub-key-reader" = {
-        scope                = azurerm_resource_group.extid[0].id
-        role_definition_name = "APIM Subscription Key Reader"
-        principal_id         = data.azuread_group.api_marketplace.object_id
-      }
-    } : {}
+    local.amp_role_assignment,
+    local.amp_extid_default_role_assignment,
+    local.amp_apim_subscription_key_reader_role_assignment
   )
 }
 
