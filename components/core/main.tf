@@ -31,7 +31,7 @@ locals {
   amp_apim_subscription_key_reader_role_assignment = merge(!local.is_prod && !local.is_sbox ? {
     "api_marketplace-apim-sub-key-reader" = {
       scope                = azurerm_resource_group.this.id
-      role_definition_name = "APIM Subscription Key Reader"
+      role_definition_name = "API Management Subscription Key Reader"
       principal_id         = data.azuread_group.api_marketplace.object_id
     }
   } : {}, {})
