@@ -1,7 +1,7 @@
 locals {
   naming_env = var.env == "dev" ? "preview" : var.env == "test" ? "perftest" : var.env == "stg" ? "aat" : var.env
 
-  api_marketplace_contributor_envs = toset(["sbox", "dev"])
+  api_marketplace_apim_key_reader_envs = toset(["dev"])
 
   # azure-private-dns uses a different service connection in sandbox.
   private_dns_pipeline_principal_ids = var.env == "sbox" ? toset([
@@ -14,13 +14,13 @@ locals {
   role_assignments = merge(var.env != "prod" ? {
     "api_marketplace-apim" = {
       scope                = azurerm_resource_group.this.id
-      role_definition_name = contains(local.api_marketplace_contributor_envs, var.env) ? "Contributor" : "Reader"
+      role_definition_name = contains(local.api_marketplace_apim_key_reader_envs, var.env) ? "APIM Subscription Key Reader" : "Reader"
       principal_id         = data.azuread_group.api_marketplace.object_id
     }
     } : {}, var.deploy_extid_rg ? {
     "api_marketplace-extid" = {
       scope                = azurerm_resource_group.extid[0].id
-      role_definition_name = contains(local.api_marketplace_contributor_envs, var.env) ? "Contributor" : "Reader"
+      role_definition_name = contains(local.api_marketplace_apim_key_reader_envs, var.env) ? "APIM Subscription Key Reader" : "Reader"
       principal_id         = data.azuread_group.api_marketplace.object_id
     }
   } : {})
