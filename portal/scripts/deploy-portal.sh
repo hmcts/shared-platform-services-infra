@@ -169,7 +169,7 @@ if [[ -f "$CONTENT_FILE" ]]; then
     items=$(echo "$raw_content" | jq --arg ct "$ct_id" '.[$ct].items // []')
     item_count=$(echo "$items" | jq 'length')
 
-    for i in $(seq 0 $((item_count - 1))); do
+    for (( i=0; i<item_count; i++ )); do
       item=$(echo "$items" | jq --argjson idx "$i" '.[$idx]')
       item_id=$(echo "$item" | jq -r '.id | split("/contentItems/") | .[1]')
       item_uri="${BASE_URL}/contentTypes/${ct_id}/contentItems/${item_id}?api-version=${API_VERSION}"

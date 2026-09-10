@@ -2657,45 +2657,6 @@
                     {
                       "nodes": [
                         {
-                          "nodes": [
-                            {
-                              "identifier": null,
-                              "nodes": [
-                                {
-                                  "text": "Transform ideas into reality with our APIs",
-                                  "type": "text"
-                                }
-                              ],
-                              "styles": {
-                                "alignment": {
-                                  "md": "utils/text/alignLeft",
-                                  "xs": "utils/text/alignCenter"
-                                },
-                                "appearance": "globals/body/ji4hv"
-                              },
-                              "type": "paragraph"
-                            },
-                            {
-                              "identifier": null,
-                              "nodes": [
-                                {
-                                  "text": "Our API Developer Portal offers the tools you need to explore, test, and integrate APIs with ease. Start building today.",
-                                  "type": "text"
-                                }
-                              ],
-                              "styles": {
-                                "alignment": {
-                                  "md": "utils/text/alignLeft",
-                                  "xs": "utils/text/alignCenter"
-                                },
-                                "appearance": "globals/body/tkf9e"
-                              },
-                              "type": "paragraph"
-                            }
-                          ],
-                          "type": "text-block"
-                        },
-                        {
                           "hyperlink": {
                             "targetId": "contentTypes/page/contentItems/38b4a583-e611-dbf8-b945-a2d591c61614"
                           },
@@ -2713,42 +2674,17 @@
                             }
                           },
                           "type": "button"
-                        },
-                        {
-                          "hyperlink": {
-                            "targetId": "contentTypes/page/contentItems/0145411a-2c82-325a-4390-76cff184530b"
-                          },
-                          "label": "Sign up",
-                          "styles": {
-                            "appearance": "components/button/default",
-                            "instance": {
-                              "id": "sleofjegbz",
-                              "margin": {
-                                "left": 10
-                              },
-                              "padding": {
-                                "bottom": 9,
-                                "left": 20,
-                                "right": 20,
-                                "top": 9
-                              }
-                            }
-                          },
-                          "type": "button"
                         }
                       ],
                       "role": "aside",
                       "styles": {
                         "instance": {
-                          "border": null,
-                          "borderRadius": null,
                           "grid-cell": {
                             "md": {
                               "alignment": {
                                 "horizontal": "start",
                                 "vertical": "center"
                               },
-                              "overflow": null,
                               "position": {
                                 "col": 1,
                                 "row": 1
@@ -2760,7 +2696,8 @@
                             },
                             "xl": {
                               "alignment": {
-                                "horizontal": "start"
+                                "horizontal": "start",
+                                "vertical": "start"
                               },
                               "overflow": null
                             },
@@ -2788,24 +2725,10 @@
                       "type": "grid-cell"
                     },
                     {
-                      "nodes": [
-                        {
-                          "sourceId": "contentTypes/blob/contentItems/f1183eca-b12a-24b7-23e8-345854d74aa6",
-                          "styles": {
-                            "appearance": "components/picture/default",
-                            "instance": {
-                              "id": "sjjxoovbbn",
-                              "margin": null
-                            }
-                          },
-                          "type": "picture"
-                        }
-                      ],
+                      "nodes": null,
                       "role": "article",
                       "styles": {
                         "instance": {
-                          "border": null,
-                          "borderRadius": null,
                           "grid-cell": {
                             "md": {
                               "alignment": {
@@ -2825,8 +2748,7 @@
                               "alignment": {
                                 "horizontal": "center",
                                 "vertical": "center"
-                              },
-                              "overflow": null
+                              }
                             },
                             "xs": {
                               "position": {
@@ -2876,18 +2798,12 @@
                       },
                       "id": "abzfkynpvf",
                       "margin": {
-                        "lg": null,
-                        "md": null,
-                        "xl": null,
                         "xs": {
                           "left": "auto",
                           "right": "auto"
                         }
                       },
                       "padding": {
-                        "lg": null,
-                        "md": null,
-                        "xl": null,
                         "xs": {
                           "bottom": 5,
                           "left": 0,
@@ -2909,8 +2825,6 @@
                   "background": {
                     "images": [
                       {
-                        "attachment": null,
-                        "blend": null,
                         "position": "center center",
                         "repeat": "no-repeat",
                         "size": "cover",
@@ -2919,7 +2833,6 @@
                     ]
                   },
                   "id": "aerdouvoot",
-                  "size": null,
                   "stickTo": {
                     "lg": "none",
                     "md": "none",
@@ -2935,362 +2848,7 @@
                 {
                   "nodes": [
                     {
-                      "nodes": [
-                        {
-                          "nodes": [
-                            {
-                              "identifier": "b9kvz",
-                              "nodes": [
-                                {
-                                  "text": "Resources",
-                                  "type": "text"
-                                }
-                              ],
-                              "styles": {
-                                "alignment": {
-                                  "lg": "utils/text/alignCenter",
-                                  "md": "utils/text/alignCenter",
-                                  "xl": "utils/text/alignCenter",
-                                  "xs": "utils/text/alignCenter"
-                                }
-                              },
-                              "type": "heading1"
-                            }
-                          ],
-                          "type": "text-block"
-                        },
-                        {
-                          "nodes": [
-                            {
-                              "caption": "Feature 1",
-                              "height": 200,
-                              "sourceId": "contentTypes/blob/contentItems/fda973f5-65b8-5b64-cd56-4df32ec32ffd",
-                              "styles": {
-                                "appearance": "components/picture/default",
-                                "instance": {
-                                  "id": "kvsnazahzr",
-                                  "margin": {
-                                    "left": "auto",
-                                    "right": "auto"
-                                  }
-                                }
-                              },
-                              "type": "picture",
-                              "width": "245px"
-                            },
-                            {
-                              "nodes": [
-                                {
-                                  "identifier": "wbd0t",
-                                  "nodes": [
-                                    {
-                                      "text": "Get started",
-                                      "type": "text"
-                                    }
-                                  ],
-                                  "type": "heading4"
-                                },
-                                {
-                                  "nodes": [
-                                    {
-                                      "text": "Learn how to get started with our APIs and explore our catalog to find the perfect API for your needs.",
-                                      "type": "text"
-                                    }
-                                  ],
-                                  "styles": {
-                                    "alignment": {
-                                      "xl": "utils/text/alignLeft"
-                                    }
-                                  },
-                                  "type": "paragraph"
-                                }
-                              ],
-                              "styles": {
-                                "instance": {
-                                  "id": "bwhlogsyed",
-                                  "padding": {
-                                    "bottom": 10,
-                                    "left": 15,
-                                    "right": 15,
-                                    "top": 10
-                                  }
-                                }
-                              },
-                              "type": "text-block"
-                            },
-                            {
-                              "hyperlink": {
-                                "targetId": "contentTypes/page/contentItems/38b4a583-e611-dbf8-b945-a2d591c61614"
-                              },
-                              "label": "Start here",
-                              "styles": {
-                                "appearance": "components/button/default",
-                                "instance": {
-                                  "id": "mbvvfcorft",
-                                  "margin": {
-                                    "bottom": 15,
-                                    "left": 15
-                                  }
-                                }
-                              },
-                              "type": "button"
-                            }
-                          ],
-                          "styles": {
-                            "appearance": "components/card/default",
-                            "instance": {
-                              "background": {
-                                "colorId": "colors/defaultBg"
-                              },
-                              "container": {
-                                "xl": {
-                                  "alignment": {
-                                    "horizontal": "start"
-                                  }
-                                }
-                              },
-                              "id": "xrsrqictj1",
-                              "margin": {
-                                "bottom": 20,
-                                "left": 20,
-                                "right": 20,
-                                "top": 20
-                              },
-                              "padding": {
-                                "bottom": 0,
-                                "left": 0,
-                                "right": 0,
-                                "top": 0
-                              },
-                              "size": {
-                                "width": "350px"
-                              }
-                            }
-                          },
-                          "type": "card"
-                        },
-                        {
-                          "nodes": [
-                            {
-                              "caption": "Feature 2",
-                              "height": 200,
-                              "sourceId": "contentTypes/blob/contentItems/c927adba-5309-1b4c-80e7-9e13f2d663c1",
-                              "styles": {
-                                "appearance": "components/picture/default",
-                                "instance": {
-                                  "id": "gkagnfnpev",
-                                  "margin": {
-                                    "left": "auto",
-                                    "right": "auto"
-                                  }
-                                }
-                              },
-                              "type": "picture",
-                              "width": "245px"
-                            },
-                            {
-                              "nodes": [
-                                {
-                                  "identifier": "d40e7",
-                                  "nodes": [
-                                    {
-                                      "text": "Subscribe",
-                                      "type": "text"
-                                    }
-                                  ],
-                                  "type": "heading4"
-                                },
-                                {
-                                  "nodes": [
-                                    {
-                                      "text": "Products in the developer portal encompass one or more APIs. Subscribe to a product to get access to utilize the APIs.",
-                                      "type": "text"
-                                    }
-                                  ],
-                                  "styles": {
-                                    "alignment": {
-                                      "xl": "utils/text/alignLeft"
-                                    }
-                                  },
-                                  "type": "paragraph"
-                                }
-                              ],
-                              "styles": {
-                                "instance": {
-                                  "id": "bwhlogsyed",
-                                  "padding": {
-                                    "bottom": 10,
-                                    "left": 15,
-                                    "right": 15,
-                                    "top": 10
-                                  }
-                                }
-                              },
-                              "type": "text-block"
-                            },
-                            {
-                              "hyperlink": {
-                                "targetId": "contentTypes/page/contentItems/9862f795-6e36-217e-6dc7-cf7226591267"
-                              },
-                              "label": "Learn more",
-                              "styles": {
-                                "appearance": "components/button/default",
-                                "instance": {
-                                  "id": "yxetigiwcq",
-                                  "margin": {
-                                    "bottom": 15,
-                                    "left": 15
-                                  }
-                                }
-                              },
-                              "type": "button"
-                            }
-                          ],
-                          "styles": {
-                            "appearance": "components/card/default",
-                            "instance": {
-                              "background": {
-                                "colorId": "colors/defaultBg"
-                              },
-                              "container": {
-                                "xl": {
-                                  "alignment": {
-                                    "horizontal": "start"
-                                  }
-                                }
-                              },
-                              "id": "xrsrqictj2",
-                              "margin": {
-                                "bottom": 20,
-                                "left": 20,
-                                "right": 20,
-                                "top": 20
-                              },
-                              "padding": {
-                                "bottom": 0,
-                                "left": 0,
-                                "right": 0,
-                                "top": 0
-                              },
-                              "size": {
-                                "width": "350px"
-                              }
-                            }
-                          },
-                          "type": "card"
-                        },
-                        {
-                          "nodes": [
-                            {
-                              "caption": "Feature 3",
-                              "height": 200,
-                              "sourceId": "contentTypes/blob/contentItems/a8912683-6777-1252-2583-2fe2f5ecd80a",
-                              "styles": {
-                                "appearance": "components/picture/default",
-                                "instance": {
-                                  "id": "ymaqmwwrhj",
-                                  "margin": {
-                                    "left": "auto",
-                                    "right": "auto"
-                                  }
-                                }
-                              },
-                              "type": "picture",
-                              "width": "245px"
-                            },
-                            {
-                              "nodes": [
-                                {
-                                  "identifier": "cve4c",
-                                  "nodes": [
-                                    {
-                                      "text": "Get support",
-                                      "type": "text"
-                                    }
-                                  ],
-                                  "type": "heading4"
-                                },
-                                {
-                                  "nodes": [
-                                    {
-                                      "text": "Need help? Our API admin team is here for you. Reach out to us for any questions or assistance with our APIs.",
-                                      "type": "text"
-                                    }
-                                  ],
-                                  "styles": {
-                                    "alignment": {
-                                      "xl": "utils/text/alignLeft"
-                                    }
-                                  },
-                                  "type": "paragraph"
-                                }
-                              ],
-                              "styles": {
-                                "instance": {
-                                  "id": "bwhlogsyed",
-                                  "padding": {
-                                    "bottom": 10,
-                                    "left": 15,
-                                    "right": 15,
-                                    "top": 10
-                                  }
-                                }
-                              },
-                              "type": "text-block"
-                            },
-                            {
-                              "hyperlink": {
-                                "target": "_blank",
-                                "targetId": "contentTypes/url/contentItems/feefd660-d398-3891-c834-24f816633a01"
-                              },
-                              "label": "Contact us",
-                              "styles": {
-                                "appearance": "components/button/default",
-                                "instance": {
-                                  "id": "kdduoynoxq",
-                                  "margin": {
-                                    "bottom": 15,
-                                    "left": 15
-                                  }
-                                }
-                              },
-                              "type": "button"
-                            }
-                          ],
-                          "styles": {
-                            "appearance": "components/card/default",
-                            "instance": {
-                              "background": {
-                                "colorId": "colors/defaultBg"
-                              },
-                              "container": {
-                                "xl": {
-                                  "alignment": {
-                                    "horizontal": "start"
-                                  }
-                                }
-                              },
-                              "id": "xrsrqictj3",
-                              "margin": {
-                                "bottom": 20,
-                                "left": 20,
-                                "right": 20,
-                                "top": 20
-                              },
-                              "padding": {
-                                "bottom": 0,
-                                "left": 0,
-                                "right": 0,
-                                "top": 0
-                              },
-                              "size": {
-                                "width": "350px"
-                              }
-                            }
-                          },
-                          "type": "card"
-                        }
-                      ],
+                      "nodes": null,
                       "role": "article",
                       "styles": {
                         "instance": {
@@ -3588,29 +3146,6 @@
                         },
                         {
                           "hyperlink": {
-                            "targetId": "contentTypes/page/contentItems/81b0cd55-fb1a-12ee-e41a-d2d6b851ac60"
-                          },
-                          "label": "Sign in",
-                          "security": {
-                            "allow": [
-                              "guests"
-                            ],
-                            "type": "group"
-                          },
-                          "styles": {
-                            "appearance": "components/button/p66vu",
-                            "instance": {
-                              "display": {
-                                "md": "inline-block",
-                                "xs": "none"
-                              },
-                              "id": "jixcqqzbxy"
-                            }
-                          },
-                          "type": "button"
-                        },
-                        {
-                          "hyperlink": {
                             "target": "_self",
                             "targetId": "contentTypes/url/contentItems/1bec2534-46c4-7555-f8ec-ffcd9645fc2e"
                           },
@@ -3872,7 +3407,6 @@
                         {
                           "nodes": [
                             {
-                              "identifier": null,
                               "nodes": [
                                 {
                                   "text": "Powered by ",
@@ -3985,7 +3519,6 @@
                       "width": 1
                     }
                   },
-                  "borderRadius": null,
                   "id": "qrjgiseunh",
                   "stickTo": {
                     "xs": "none"
