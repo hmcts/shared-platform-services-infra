@@ -3,7 +3,7 @@
     "id": "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/rg-sps-platform-sbox/providers/Microsoft.ApiManagement/service/sps-api-mgmt-sbox/portalsettings/signin",
     "name": "signin",
     "properties": {
-      "enabled": true,
+      "enabled": false,
       "subscriptions": null,
       "termsOfService": null,
       "url": null,
@@ -22,7 +22,7 @@
       "termsOfService": {
         "consentRequired": false,
         "enabled": false,
-        "text": ""
+        "text": null
       },
       "url": null,
       "userRegistration": null,
