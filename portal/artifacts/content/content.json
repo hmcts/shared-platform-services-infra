@@ -2696,8 +2696,10 @@
                             },
                             "xl": {
                               "alignment": {
-                                "horizontal": "start"
-                              }
+                                "horizontal": "start",
+                                "vertical": "start"
+                              },
+                              "overflow": null
                             },
                             "xs": {
                               "position": {
