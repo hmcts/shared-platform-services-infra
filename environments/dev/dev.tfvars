@@ -44,3 +44,21 @@ apim_diagnostic_settings = {
   backend_request_body_bytes   = 8192
   backend_response_body_bytes  = 8192
 }
+
+debug_vm = {
+  enabled = true
+}
+
+cross_tenant_peering = {
+  cnp_subscription_id = "7cfd7e05-06a1-4d9b-a426-db304bc99aab" # DTS-SPS-PREVIEW
+  cpp_subscription_id = "e6b5053b-4c38-4475-a835-a025aeb3d8c7" # CPP Strategic Platform - non-live
+
+  peerings = {
+    "vn-sit-svc-01" = {
+      source_name = "sps-platform-networking-vnet-preview-to-cpp-nonlive-vn-sit-svc-01"
+      target_name = "cpp-nonlive-vn-sit-svc-01-to-sps-platform-networking-vnet-preview"
+      vnet_name   = "VN-SIT-SVC-01"
+      rg_name     = "RG-SIT-SVC-01"
+    }
+  }
+}

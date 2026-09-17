@@ -56,7 +56,7 @@ provider "azurerm" {
 # Logic below needs to be updated. Currently, the cross-tenant peering module is only used in sbox, but it should be updated to support other environments in the future.
 module "cross_tenant_peering" {
 
-  count = var.env == "sbox" ? 1 : 0
+  count = var.cross_tenant_peering.peerings != null && length(var.cross_tenant_peering.peerings) > 0 ? 1 : 0
 
   source = "../../modules/cross-tenant-peering"
 
