@@ -219,3 +219,9 @@ variable "identity_provider" {
   })
   default = {}
 }
+
+variable "apim_subscription_managers" {
+  description = "Managed identities granted the custom APIM subscription manager role (list/get/create/delete subscription keys) on the APIM instance. Key is a logical name, value is the identity's principal (object) ID."
+  type        = map(string)
+  default     = {}
+}

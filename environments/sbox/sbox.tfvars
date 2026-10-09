@@ -4,6 +4,12 @@ env          = "sbox"
 subscription = "sbox"
 autoShutdown = true
 
+# Managed identities allowed to manage APIM subscription keys on sps-api-mgmt-sbox.
+apim_subscription_managers = {
+  # apim-sandbox-mi (DCD-CFT-Sandbox / managed-identities-sandbox-rg), used by service-api-marketplace
+  service-api-marketplace = "f8a38d86-8fee-4fb1-93f8-3a66d9aae06a"
+}
+
 ssl_policy = {
   policy_type          = "Predefined"
   policy_name          = "AppGwSslPolicy20220101S"
