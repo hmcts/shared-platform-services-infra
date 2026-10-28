@@ -6,8 +6,8 @@ autoShutdown = true
 
 # Managed identities allowed to manage APIM subscription keys on sps-api-mgmt-sbox.
 apim_subscription_managers = {
-  # apim-sandbox-mi (DCD-CFT-Sandbox / managed-identities-sandbox-rg), used by service-api-marketplace
-  service-api-marketplace = "f8a38d86-8fee-4fb1-93f8-3a66d9aae06a"
+  # amp-sandbox-mi (DCD-CFT-Sandbox / managed-identities-sandbox-rg), used by service-api-marketplace
+  service-api-marketplace = "c3de4f49-b1f5-47ac-b178-d236f14d3dfa"
 }
 
 ssl_policy = {
