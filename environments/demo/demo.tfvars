@@ -4,6 +4,12 @@ env          = "demo"
 subscription = "demo"
 autoShutdown = true
 
+# Managed identities allowed to manage APIM subscription keys on sps-api-mgmt-demo.
+apim_subscription_managers = {
+  # amp-demo-mi (managed-identities-demo-rg), used by service-api-marketplace
+  service-api-marketplace = "45bcd085-15b1-4fe6-b70b-feb9e8a55ecc"
+}
+
 ssl_policy = {
   policy_type          = "Predefined"
   policy_name          = "AppGwSslPolicy20220101S"
