@@ -23,21 +23,12 @@ module "api-mgmt" {
   disable_trusted_service_connectivity = var.disable_trusted_service_connectivity
   custom_nsg_rules                     = var.apim_custom_nsg_rules
   cert_domain                          = "api"
-  custom_gateway_hostnames = concat(
-    [
-      { host_name = "sps-api-mgmt${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
-      { host_name = "sps-api-mgmt-appgw${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
-      { host_name = "sps-mtls-api-mgmt-appgw${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
-    ],
-    # sandbox.api.hmcts.net apex is only ever served from the sandbox APIM
-    var.subscription == "sbox" ? [{ host_name = "sandbox.api.hmcts.net" }] : [],
-    # aat.api.hmcts.net apex is only ever served from the stg APIM
-    var.subscription == "stg" ? [{ host_name = "aat.api.hmcts.net" }] : [],
-    # preview.api.hmcts.net apex is only ever served from the dev APIM
-    var.subscription == "dev" ? [{ host_name = "preview.api.hmcts.net" }] : [],
-    # api.hmcts.net apex is only ever served from the prod APIM
-    var.subscription == "prod" ? [{ host_name = "api.hmcts.net" }] : []
-  )
+  custom_gateway_hostnames = [
+    { host_name = join(".", compact(["sps-api-mgmt", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact(["sps-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact(["sps-mtls-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact([lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+  ]
   developer_portal = {
     sign_in_enabled = false
     sign_up         = null
