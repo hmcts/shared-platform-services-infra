@@ -2,6 +2,12 @@ project      = "spshmcts"
 env          = "stg"
 subscription = "aat"
 
+# Managed identities allowed to manage APIM subscription keys on sps-api-mgmt-aat.
+apim_subscription_managers = {
+  # amp-aat-mi (managed-identities-aat-rg), used by service-api-marketplace
+  service-api-marketplace = "6e337a81-8e59-4ae4-8feb-9108f9a49a27"
+}
+
 hub_app_gw_private_ip_address = ["10.180.21.10"]
 apim_appgw_backend_pool_ips   = ["10.180.20.4"]
 apim_appgw_backend_pool_fqdns = []
