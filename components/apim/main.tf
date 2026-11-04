@@ -30,7 +30,13 @@ module "api-mgmt" {
       { host_name = "sps-mtls-api-mgmt-appgw${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
     ],
     # sandbox.api.hmcts.net apex is only ever served from the sandbox APIM
-    var.subscription == "sbox" ? [{ host_name = "sandbox.api.hmcts.net" }] : []
+    var.subscription == "sbox" ? [{ host_name = "sandbox.api.hmcts.net" }] : [],
+    # aat.api.hmcts.net apex is only ever served from the stg APIM
+    var.subscription == "stg" ? [{ host_name = "aat.api.hmcts.net" }] : [],
+    # preview.api.hmcts.net apex is only ever served from the dev APIM
+    var.subscription == "dev" ? [{ host_name = "preview.api.hmcts.net" }] : [],
+    # api.hmcts.net apex is only ever served from the prod APIM
+    var.subscription == "prod" ? [{ host_name = "api.hmcts.net" }] : []
   )
   developer_portal = {
     sign_in_enabled = false
