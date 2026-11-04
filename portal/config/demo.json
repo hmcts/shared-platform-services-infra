@@ -1,7 +1,7 @@
 {
   "_comment": "Demo environment-specific configuration for APIM developer portal deployment.",
   "_description": "Add key/value pairs under 'substitutions' to replace placeholder strings in the exported portal content.json before uploading to the target APIM instance.",
-  "apim_portal_url": "",
+  "apim_portal_url": "https://amp-portal.demo.api.hmcts.net",
   "environment_display_name": "Demo",
   "substitutions": {
   }

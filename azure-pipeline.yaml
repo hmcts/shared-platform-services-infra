@@ -171,14 +171,13 @@ stages:
   # deployment uses a script task rather than the Terraform template,
   # and APIM is currently scoped to specific environments.
   #
-  # To add portal deployment for a new environment when APIM is extended there:
-  #   1. Add the environment to environment_components with required_outputs.
-  #   2. Copy the stage block below, replacing 'sbox' with the new env name and
-  #      updating the service_connection reference.
+  # To add portal deployment for another environment, add its name to the in()
+  # list below. Without a stage its portal is never published, and visitors see
+  # the "content hasn't been published yet" placeholder instead of the APIs.
   # ─────────────────────────────────────────────────────────────────────────────
   - ${{ if and(parameters.deployDeveloperPortal, eq(parameters.overrideAction, 'apply')) }}:
     - ${{ each env in parameters.envs }}:
-      - ${{ if eq(env.name, 'sbox') }}:
+      - ${{ if in(env.name, 'sbox', 'demo', 'prod') }}:
         - stage: ${{ env.name }}_apim_portal
           displayName: '${{ env.name }}: APIM Developer Portal'
           dependsOn: ${{ env.name }}_apim
