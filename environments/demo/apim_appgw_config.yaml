@@ -8,6 +8,16 @@ gateways:
       - certificate_name: wildcard-demo-api-hmcts-net
     app_configuration:
       - product: sps
+        component: apim-gateway-public-apex
+        ssl_enabled: true
+        backend_protocol: Https
+        use_public_ip: true
+        host_name_prefix: demo
+        health_path_override: "/status-0123456789abcdef"
+        ssl_certificate_name: demo-api-hmcts-net
+        host_name_suffix: api.hmcts.net
+        ssl_host_name_suffix: api.hmcts.net
+      - product: sps
         component: apim-gateway-public
         ssl_enabled: true
         backend_protocol: Https
