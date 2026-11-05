@@ -10,3 +10,7 @@ locals {
     "dev"  = "preview"
   }
 }
+data "azurerm_key_vault_certificate" "certificate" {
+  name         = local.gateway_hostname.cert_name
+  key_vault_id = local.gateway_hostname.key_vault_id
+}

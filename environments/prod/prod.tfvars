@@ -25,6 +25,10 @@ networking = {
   vpn = {}
 }
 
+gateway_hostname = {
+  key_vault_id       = "/subscriptions/890625e2-7a8b-445c-81b4-8044a062cef3/resourceGroups/sps-platform-prod-rg/providers/Microsoft.KeyVault/vaults/acmedtsspsprod"
+  cert_name          = "api-hmcts-net"
+}
 developer_portal = {
   custom_domain_name = "amp-portal.api.hmcts.net"
   key_vault_id       = "/subscriptions/890625e2-7a8b-445c-81b4-8044a062cef3/resourceGroups/sps-platform-prod-rg/providers/Microsoft.KeyVault/vaults/acmedtsspsprod"
