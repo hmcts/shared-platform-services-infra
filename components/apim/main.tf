@@ -7,7 +7,7 @@ module "ctags" {
 }
 
 module "api-mgmt" {
-  source                               = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=change/top_level_domain"
+  source                               = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=main"
   location                             = var.location
   custom_name                          = "sps-api-mgmt-${var.subscription}"
   sku_name                             = var.apim_sku_name
