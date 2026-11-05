@@ -24,9 +24,10 @@ module "api-mgmt" {
   custom_nsg_rules                     = var.apim_custom_nsg_rules
   cert_domain                          = "api"
   custom_gateway_hostnames = [
-    { host_name = "sps-api-mgmt${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
-    { host_name = "sps-api-mgmt-appgw${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
-    { host_name = "sps-mtls-api-mgmt-appgw${var.subscription == "sbox" ? ".sandbox" : var.subscription == "prod" ? "" : ".${var.subscription}"}.api.hmcts.net" },
+    { host_name = join(".", compact(["sps-api-mgmt", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact(["sps-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact(["sps-mtls-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact([lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
   ]
   developer_portal = {
     sign_in_enabled = false
