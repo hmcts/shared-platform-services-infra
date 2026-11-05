@@ -11,6 +11,7 @@ locals {
   }
 }
 data "azurerm_key_vault_certificate" "certificate" {
+  count        = var.gateway_hostname.cert_name != null && var.gateway_hostname.key_vault_id != null ? 1 : 0
   name         = var.gateway_hostname.cert_name
   key_vault_id = var.gateway_hostname.key_vault_id
 }
