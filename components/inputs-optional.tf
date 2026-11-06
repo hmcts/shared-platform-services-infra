@@ -149,6 +149,14 @@ variable "apim_custom_nsg_rules" {
   default = {}
 }
 
+variable "gateway_hostname" {
+  description = "Configuration for the APIM gateway custom domain and certificate"
+  type = object({
+    key_vault_id       = optional(string)
+    cert_name          = optional(string)
+  })
+  default = {}
+}
 variable "developer_portal" {
   description = "Configuration for the APIM developer portal custom domain and certificate"
   type = object({

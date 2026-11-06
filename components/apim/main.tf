@@ -27,7 +27,7 @@ module "api-mgmt" {
     { host_name = join(".", compact(["sps-api-mgmt", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
     { host_name = join(".", compact(["sps-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
     { host_name = join(".", compact(["sps-mtls-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
-    { host_name = join(".", compact([lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
+    { host_name = join(".", compact([lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])), cert_keyvault_id = length(data.azurerm_key_vault_certificate.certificate) > 0 ? replace(data.azurerm_key_vault_certificate.certificate[0].secret_id, "/${data.azurerm_key_vault_certificate.certificate[0].version}", "") : null },
   ]
   developer_portal = {
     sign_in_enabled = false
