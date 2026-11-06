@@ -25,9 +25,9 @@ module "api-mgmt" {
   cert_domain                          = "api"
   custom_gateway_hostnames = [
     { host_name = join(".", compact(["sps-api-mgmt", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
-    { host_name = join(".", compact(["sps-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
-    { host_name = join(".", compact(["sps-mtls-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
-    { host_name = join(".", compact([lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])), cert_keyvault_id = length(data.azurerm_key_vault_certificate.certificate) > 0 ? replace(data.azurerm_key_vault_certificate.certificate[0].secret_id, "/${data.azurerm_key_vault_certificate.certificate[0].version}", "") : null },
+    { host_name = join(".", compact(["sps-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])), default_ssl_binding = false },
+    { host_name = join(".", compact(["sps-mtls-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])), default_ssl_binding = false },
+    { host_name = join(".", compact([lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])), cert_keyvault_id = length(data.azurerm_key_vault_certificate.certificate) > 0 ? replace(data.azurerm_key_vault_certificate.certificate[0].secret_id, "/${data.azurerm_key_vault_certificate.certificate[0].version}", "") : null, default_ssl_binding = false },
   ]
   developer_portal = {
     sign_in_enabled = false
