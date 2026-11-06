@@ -6,6 +6,7 @@ gateways:
       private_ip_address: 10.180.13.10
     ssl_certificates:
       - certificate_name: wildcard-ithc-api-hmcts-net
+      - certificate_name: ithc-api-hmcts-net
     app_configuration:
       - product: sps
         component: apim-gateway-public-apex
