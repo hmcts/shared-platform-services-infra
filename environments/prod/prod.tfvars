@@ -3,6 +3,10 @@ project      = "spshmcts"
 env          = "prod"
 subscription = "prod"
 
+apim_subscription_managers = {
+  service-api-marketplace = "e8dc3dce-ab20-4e52-b821-caf3e482a740"
+}
+
 ssl_policy = {
   policy_type          = "Predefined"
   policy_name          = "AppGwSslPolicy20220101S"
