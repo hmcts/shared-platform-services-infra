@@ -1,0 +1,96 @@
+name: Auto-Generate CHANGELOG
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Only the push-back step needs write access; everything else is read-only.
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: changelog-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-changelog:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Generate CHANGELOG.md
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --output CHANGELOG.md
+        env:
+          OUTPUT: CHANGELOG.md
+
+      - name: Commit and push CHANGELOG.md
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update CHANGELOG.md [skip ci]"
+          file_pattern: "CHANGELOG.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+
+  preview-changelog:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch merged with main
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+
+      - name: Generate preview CHANGELOG.md (not committed)
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --output /tmp/CHANGELOG-preview.md
+        env:
+          OUTPUT: /tmp/CHANGELOG-preview.md
+
+      - name: Diff preview against current CHANGELOG.md
+        id: diff
+        run: |
+          touch CHANGELOG.md
+          if ! diff -q CHANGELOG.md /tmp/CHANGELOG-preview.md > /dev/null 2>&1; then
+            {
+              echo "changed=true"
+              echo "diff<<EOF"
+              diff -u CHANGELOG.md /tmp/CHANGELOG-preview.md || true
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment preview on PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: changelog-preview
+          message: |
+            ### 📋 CHANGELOG.md preview
+
+            Merging this PR will update `CHANGELOG.md` as follows:
+
+            ```diff
+            ${{ steps.diff.outputs.diff }}
+            ```
+
+            This is a preview only — `CHANGELOG.md` is not committed on PRs, only on merge to `main`.
+
