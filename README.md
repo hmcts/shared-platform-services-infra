@@ -26,6 +26,74 @@ for full documentation including:
 - Environment-specific configuration
 - Rollback guidance
 
+## Deployment pipeline
+
+Auto-generated from `azure-pipeline.yaml` — shows every `<environment>_<component>` stage and its
+dependencies (same-environment component order, plus the environment's `Precheck`/promotion gate).
+
+<!-- BEGIN_PIPELINE_DIAGRAM -->
+```mermaid
+flowchart LR
+  Precheck
+  subgraph sbox ["sbox"]
+    sbox_core["core"]
+    sbox_apim["apim"]
+    sbox_core --> sbox_apim
+    sbox_apim_appgw["apim_appgw"]
+    sbox_apim --> sbox_apim_appgw
+  end
+  Precheck --> sbox_core
+  subgraph dev ["dev"]
+    dev_core["core"]
+    dev_apim["apim"]
+    dev_core --> dev_apim
+    dev_apim_appgw["apim_appgw"]
+    dev_apim --> dev_apim_appgw
+  end
+  Precheck --> dev_core
+  subgraph test ["test"]
+    test_core["core"]
+    test_apim["apim"]
+    test_core --> test_apim
+    test_apim_appgw["apim_appgw"]
+    test_apim --> test_apim_appgw
+  end
+  Precheck --> test_core
+  subgraph ithc ["ithc"]
+    ithc_core["core"]
+    ithc_apim["apim"]
+    ithc_core --> ithc_apim
+    ithc_apim_appgw["apim_appgw"]
+    ithc_apim --> ithc_apim_appgw
+  end
+  Precheck --> ithc_core
+  subgraph demo ["demo"]
+    demo_core["core"]
+    demo_apim["apim"]
+    demo_core --> demo_apim
+    demo_apim_appgw["apim_appgw"]
+    demo_apim --> demo_apim_appgw
+  end
+  Precheck --> demo_core
+  subgraph stg ["stg"]
+    stg_core["core"]
+    stg_apim["apim"]
+    stg_core --> stg_apim
+    stg_apim_appgw["apim_appgw"]
+    stg_apim --> stg_apim_appgw
+  end
+  Precheck --> stg_core
+  subgraph prod ["prod"]
+    prod_core["core"]
+    prod_apim["apim"]
+    prod_core --> prod_apim
+    prod_apim_appgw["apim_appgw"]
+    prod_apim --> prod_apim_appgw
+  end
+  Precheck --> prod_core
+```
+<!-- END_PIPELINE_DIAGRAM -->
+
 <!-- BEGIN_TF_DOCS -->
 ### `core`
 
