@@ -30,15 +30,34 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Render terraform-docs into README.md
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: .
-          recursive: true
-          recursive-path: components
-          output-file: README.md
-          output-method: inject
-          git-push: false
+      - name: Install terraform-docs CLI
+        run: |
+          set -euo pipefail
+          curl -sSLo /tmp/terraform-docs.tar.gz \
+            https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-linux-amd64.tar.gz
+          tar -xzf /tmp/terraform-docs.tar.gz -C /tmp terraform-docs
+          sudo mv /tmp/terraform-docs /usr/local/bin/terraform-docs
+
+      - name: Render combined terraform-docs into README.md
+        run: |
+          set -euo pipefail
+          {
+            for dir in components/core components/apim components/apim_appgw; do
+              echo "### \`${dir#components/}\`"
+              echo
+              terraform-docs markdown table --indent 3 "$dir"
+              echo
+            done
+          } > /tmp/tf-docs-combined.md
+
+          awk -v docfile=/tmp/tf-docs-combined.md '
+            BEGIN { while ((getline line < docfile) > 0) doc = doc line "\n" }
+            /<!-- BEGIN_TF_DOCS -->/ { print; printf "%s", doc; skip=1; next }
+            /<!-- END_TF_DOCS -->/ { skip=0 }
+            skip { next }
+            { print }
+          ' README.md > README.md.tmp
+          mv README.md.tmp README.md
 
       - name: Commit and push doc changes back to the PR branch
         uses: stefanzweifel/git-auto-commit-action@v5
