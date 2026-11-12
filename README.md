@@ -25,3 +25,6 @@ for full documentation including:
 - Required permissions
 - Environment-specific configuration
 - Rollback guidance
+
+<!-- BEGIN_TF_DOCS -->
+<!-- END_TF_DOCS -->
