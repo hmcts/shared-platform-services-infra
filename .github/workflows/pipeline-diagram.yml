@@ -1,0 +1,84 @@
+name: Auto-Generate Pipeline Diagram
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "azure-pipeline.yaml"
+
+# Only the push-back step needs write access; everything else is read-only.
+permissions:
+  contents: write
+
+# Avoid piling up redundant runs/commits when a PR is updated rapidly.
+concurrency:
+  group: pipeline-diagram-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  generate-diagram:
+    # Skip forked PRs: GITHUB_TOKEN has no write access to the fork's branch.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Mermaid diagram from azure-pipeline.yaml
+        run: |
+          set -euo pipefail
+
+          envs_json=$(yq -o=json '.parameters[] | select(.name == "envs") | .default' azure-pipeline.yaml)
+          components_json=$(yq -o=json '.parameters[] | select(.name == "environment_components") | .default' azure-pipeline.yaml)
+
+          {
+            echo '```mermaid'
+            echo 'flowchart LR'
+            echo '  Precheck'
+
+            while IFS=$'\t' read -r env_name env_depends_on; do
+              echo "  subgraph ${env_name} [\"${env_name}\"]"
+              prev_component=""
+              while IFS=$'\t' read -r comp_name comp_depends_on; do
+                node_id="${env_name}_${comp_name}"
+                echo "    ${node_id}[\"${comp_name}\"]"
+                if [ -n "${comp_depends_on}" ] && [ "${comp_depends_on}" != "null" ]; then
+                  prev_node_id="${env_name}_${comp_depends_on}"
+                  echo "    ${prev_node_id} --> ${node_id}"
+                fi
+              done < <(echo "${components_json}" | yq -o=tsv '.[] | [.deployment, (.depends_on // "")]')
+              echo '  end'
+
+              first_component=$(echo "${components_json}" | yq -o=tsv '.[0].deployment')
+              first_node_id="${env_name}_${first_component}"
+              if [ "${env_depends_on}" = "Precheck" ]; then
+                echo "  Precheck --> ${first_node_id}"
+              else
+                echo "  ${env_depends_on}_${first_component} --> ${first_node_id}"
+              fi
+            done < <(echo "${envs_json}" | yq -o=tsv '.[] | [.name, .depends_on]')
+
+            echo '```'
+          } > /tmp/pipeline-diagram.md
+
+          awk -v docfile=/tmp/pipeline-diagram.md '
+            BEGIN { while ((getline line < docfile) > 0) doc = doc line "\n" }
+            /<!-- BEGIN_PIPELINE_DIAGRAM -->/ { print; printf "%s", doc; skip=1; next }
+            /<!-- END_PIPELINE_DIAGRAM -->/ { skip=0 }
+            skip { next }
+            { print }
+          ' README.md > README.md.tmp
+          mv README.md.tmp README.md
+
+      - name: Commit and push diagram changes back to the PR branch
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-generate pipeline diagram [skip ci]"
+          file_pattern: "README.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"

@@ -1,0 +1,68 @@
+name: Auto-Generate Terraform Docs
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "components/**/*.tf"
+      - ".terraform-docs.yml"
+
+# Only the push-back step needs write access; everything else is read-only.
+permissions:
+  contents: write
+
+# Avoid piling up redundant runs/commits when a PR is updated rapidly.
+concurrency:
+  group: terraform-docs-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  generate-docs:
+    # Skip forked PRs: GITHUB_TOKEN has no write access to the fork's branch.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install terraform-docs CLI
+        run: |
+          set -euo pipefail
+          curl -sSLo /tmp/terraform-docs.tar.gz \
+            https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-linux-amd64.tar.gz
+          tar -xzf /tmp/terraform-docs.tar.gz -C /tmp terraform-docs
+          sudo mv /tmp/terraform-docs /usr/local/bin/terraform-docs
+
+      - name: Render combined terraform-docs into README.md
+        run: |
+          set -euo pipefail
+          {
+            for dir in components/core components/apim components/apim_appgw; do
+              echo "### \`${dir#components/}\`"
+              echo
+              terraform-docs markdown table --indent 3 "$dir"
+              echo
+            done
+          } > /tmp/tf-docs-combined.md
+
+          awk -v docfile=/tmp/tf-docs-combined.md '
+            BEGIN { while ((getline line < docfile) > 0) doc = doc line "\n" }
+            /<!-- BEGIN_TF_DOCS -->/ { print; printf "%s", doc; skip=1; next }
+            /<!-- END_TF_DOCS -->/ { skip=0 }
+            skip { next }
+            { print }
+          ' README.md > README.md.tmp
+          mv README.md.tmp README.md
+
+      - name: Commit and push doc changes back to the PR branch
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-generate terraform-docs [skip ci]"
+          file_pattern: "README.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"

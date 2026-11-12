@@ -104,7 +104,7 @@ module "cross_tenant_peering_subnet" {
 
 ## Integration note
 
-Real world example can be found in [components/hub_core/30-nonlive-cross-tenant-peering.tf](../../hub_core/30-nonlive-cross-tenant-peering.tf), where:
+Real world example can be found in [components/core/cross-tenant-peering.tf](../../components/core/cross-tenant-peering.tf), where:
 
 - env/region gating is applied with `count`
 - cross-tenant credentials and subscription IDs are loaded from Key Vault
