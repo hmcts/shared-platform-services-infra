@@ -35,7 +35,7 @@ jobs:
         with:
           working-dir: .
           recursive: true
-          recursive-path: components/*
+          recursive-path: components
           output-file: README.md
           output-method: inject
           git-push: false
