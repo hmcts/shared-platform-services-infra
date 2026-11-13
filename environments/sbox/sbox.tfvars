@@ -46,6 +46,15 @@ cross_tenant_peering = {
   }
 }
 
+# Private Endpoints to CPP Private Link Services (replaces VNet peering to the CPP WAF load balancer).
+# Connection is auto-approved by the PLS for this subscription (cpp-automation-terraform, 71-private-link-service.tf).
+cpp_private_link_endpoints = {
+  "dev-dmzwaf" = {
+    pls_alias       = "pls-dev-dmzwaf-01.38a035d0-3a20-411a-875e-1d72cb1f89c4.uksouth.azure.privatelinkservice"
+    request_message = "SPS sbox access to CPP DEV DMZ WAF"
+  }
+}
+
 networking = {
   hub = {
     next_hop_ip         = "10.10.200.36"

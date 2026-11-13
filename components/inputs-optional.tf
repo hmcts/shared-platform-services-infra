@@ -59,6 +59,17 @@ variable "cross_tenant_peering" {
   default     = {}
 }
 
+# Private Endpoints to CPP Private Link Services in another tenant, connected by PLS alias.
+# Key is a logical name used in the endpoint resource names.
+variable "cpp_private_link_endpoints" {
+  type = map(object({
+    pls_alias       = string                                  # Alias of the CPP Private Link Service
+    request_message = optional(string, "SPS platform access") # Shown to the PLS owner on the connection request
+  }))
+  description = "Private Endpoints in the SPS private-endpoints subnet that connect to CPP Private Link Services."
+  default     = {}
+}
+
 variable "hub_app_gw_private_ip_address" {
   default = []
 }
