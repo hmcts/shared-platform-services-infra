@@ -102,7 +102,7 @@ flowchart LR
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.15.7 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.80.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 5.14.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | 4.0.6 |
 
 ### Providers
@@ -110,8 +110,8 @@ flowchart LR
 | Name | Version |
 |------|---------|
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | n/a |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.80.0 |
-| <a name="provider_azurerm.central-app-kv"></a> [azurerm.central-app-kv](#provider\_azurerm.central-app-kv) | 4.80.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 5.14.0 |
+| <a name="provider_azurerm.central-app-kv"></a> [azurerm.central-app-kv](#provider\_azurerm.central-app-kv) | 5.14.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.6 |
 
 ### Modules
@@ -128,26 +128,26 @@ flowchart LR
 
 | Name | Type |
 |------|------|
-| [azurerm_dev_test_global_vm_shutdown_schedule.debug_vm](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
-| [azurerm_key_vault.extid](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/key_vault) | resource |
-| [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/key_vault) | resource |
-| [azurerm_linux_virtual_machine.debug_vm](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/linux_virtual_machine) | resource |
-| [azurerm_network_interface.debug_vm](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/network_interface) | resource |
-| [azurerm_resource_group.extid](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/resource_group) | resource |
-| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/resource_group) | resource |
-| [azurerm_role_assignment.debug_vm_admin_login](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.private_dns_vnet_join](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.rbac](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_assignment) | resource |
-| [azurerm_storage_account.api_state_store](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/storage_account) | resource |
-| [azurerm_storage_container.api_state_container](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/storage_container) | resource |
-| [azurerm_virtual_machine_extension.debug_vm_aad_login](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_dev_test_global_vm_shutdown_schedule.debug_vm](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
+| [azurerm_key_vault.extid](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/key_vault) | resource |
+| [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/key_vault) | resource |
+| [azurerm_linux_virtual_machine.debug_vm](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/linux_virtual_machine) | resource |
+| [azurerm_network_interface.debug_vm](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/network_interface) | resource |
+| [azurerm_resource_group.extid](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/resource_group) | resource |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/resource_group) | resource |
+| [azurerm_role_assignment.debug_vm_admin_login](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.private_dns_vnet_join](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.rbac](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/role_assignment) | resource |
+| [azurerm_storage_account.api_state_store](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/storage_account) | resource |
+| [azurerm_storage_container.api_state_container](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/storage_container) | resource |
+| [azurerm_virtual_machine_extension.debug_vm_aad_login](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/virtual_machine_extension) | resource |
 | [tls_private_key.debug_vm](https://registry.terraform.io/providers/hashicorp/tls/4.0.6/docs/resources/private_key) | resource |
 | [azuread_group.api_marketplace](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/group) | data source |
-| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/client_config) | data source |
-| [azurerm_key_vault.central_app_registration](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault) | data source |
-| [azurerm_key_vault_secret.multi_tenant_client_id](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_key_vault_secret.multi_tenant_client_secret](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/subscription) | data source |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/client_config) | data source |
+| [azurerm_key_vault.central_app_registration](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault) | data source |
+| [azurerm_key_vault_secret.multi_tenant_client_id](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.multi_tenant_client_secret](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/subscription) | data source |
 
 ### Inputs
 
@@ -209,14 +209,14 @@ flowchart LR
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.11.1, < 2.0.0 |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 1.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.80.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 5.14.0 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.80.0 |
-| <a name="provider_azurerm.central-app-kv"></a> [azurerm.central-app-kv](#provider\_azurerm.central-app-kv) | 4.80.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 5.14.0 |
+| <a name="provider_azurerm.central-app-kv"></a> [azurerm.central-app-kv](#provider\_azurerm.central-app-kv) | 5.14.0 |
 
 ### Modules
 
@@ -229,19 +229,19 @@ flowchart LR
 
 | Name | Type |
 |------|------|
-| [azurerm_api_management_identity_provider_aad.entra_id](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/api_management_identity_provider_aad) | resource |
-| [azurerm_api_management_named_value.environment](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/api_management_named_value) | resource |
-| [azurerm_role_assignment.apim_subscription_manager](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_assignment) | resource |
-| [azurerm_role_definition.apim_subscription_manager](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_definition) | resource |
-| [azurerm_key_vault.central_app_registration](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault) | data source |
-| [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault) | data source |
-| [azurerm_key_vault_certificate.certificate](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_certificate) | data source |
-| [azurerm_key_vault_certificate.portal](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_certificate) | data source |
-| [azurerm_key_vault_secret.base64_cpp_intermediate_ca](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_key_vault_secret.base64_cpp_root_ca](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_key_vault_secret.entra_id_app_id](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_key_vault_secret.entra_id_app_secret](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_key_vault_secret.entra_id_tenant_id](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_api_management_identity_provider_aad.entra_id](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/api_management_identity_provider_aad) | resource |
+| [azurerm_api_management_named_value.environment](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/api_management_named_value) | resource |
+| [azurerm_role_assignment.apim_subscription_manager](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/role_assignment) | resource |
+| [azurerm_role_definition.apim_subscription_manager](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/resources/role_definition) | resource |
+| [azurerm_key_vault.central_app_registration](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault) | data source |
+| [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault) | data source |
+| [azurerm_key_vault_certificate.certificate](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_certificate) | data source |
+| [azurerm_key_vault_certificate.portal](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_certificate) | data source |
+| [azurerm_key_vault_secret.base64_cpp_intermediate_ca](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.base64_cpp_root_ca](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.entra_id_app_id](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.entra_id_app_secret](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.entra_id_tenant_id](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/key_vault_secret) | data source |
 
 ### Inputs
 
@@ -301,13 +301,13 @@ flowchart LR
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.11.1, < 2.0.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.80.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 5.14.0 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.80.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 5.14.0 |
 | <a name="provider_external"></a> [external](#provider\_external) | n/a |
 
 ### Modules
@@ -322,7 +322,7 @@ flowchart LR
 
 | Name | Type |
 |------|------|
-| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/subscription) | data source |
+| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/5.14.0/docs/data-sources/subscription) | data source |
 | [external_external.bash_script](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 
 ### Inputs
