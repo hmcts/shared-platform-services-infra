@@ -1,0 +1,20 @@
+<policies>
+    <inbound>
+        <set-header name="X-Correlation-Id" exists-action="skip">
+            <value>@(context.RequestId.ToString())</value>
+        </set-header>
+    </inbound>
+    <backend>
+        <forward-request />
+    </backend>
+    <outbound>
+        <set-header name="X-Correlation-Id" exists-action="override">
+            <value>@(context.Request.Headers.GetValueOrDefault("X-Correlation-Id", context.RequestId.ToString()))</value>
+        </set-header>
+    </outbound>
+    <on-error>
+        <set-header name="X-Correlation-Id" exists-action="override">
+            <value>@(context.Request.Headers.GetValueOrDefault("X-Correlation-Id", context.RequestId.ToString()))</value>
+        </set-header>
+    </on-error>
+</policies>
