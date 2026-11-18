@@ -89,3 +89,7 @@ apim_diagnostic_settings = {
   backend_request_body_bytes   = 8192
   backend_response_body_bytes  = 8192
 }
+
+debug_vm = {
+  enabled = true
+}
