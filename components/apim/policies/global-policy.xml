@@ -1,0 +1,34 @@
+<policies>
+    <inbound>
+        <cors allow-credentials="true" terminate-unmatched-request="false">
+            <allowed-origins>
+                <origin>https://amp-portal.sandbox.api.hmcts.net</origin>
+            </allowed-origins>
+            <allowed-methods preflight-result-max-age="300">
+                <method>*</method>
+            </allowed-methods>
+            <allowed-headers>
+                <header>*</header>
+            </allowed-headers>
+            <expose-headers>
+                <header>*</header>
+            </expose-headers>
+        </cors>
+        <set-header name="X-Correlation-Id" exists-action="skip">
+            <value>@(context.RequestId.ToString())</value>
+        </set-header>
+    </inbound>
+    <backend>
+        <forward-request />
+    </backend>
+    <outbound>
+        <set-header name="X-Correlation-Id" exists-action="override">
+            <value>@(context.Request.Headers.GetValueOrDefault("X-Correlation-Id", context.RequestId.ToString()))</value>
+        </set-header>
+    </outbound>
+    <on-error>
+        <set-header name="X-Correlation-Id" exists-action="override">
+            <value>@(context.Request.Headers.GetValueOrDefault("X-Correlation-Id", context.RequestId.ToString()))</value>
+        </set-header>
+    </on-error>
+</policies>

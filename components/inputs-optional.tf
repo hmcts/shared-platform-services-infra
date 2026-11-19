@@ -244,3 +244,9 @@ variable "apim_subscription_managers" {
   type        = map(string)
   default     = {}
 }
+
+variable "global_policy_enabled" {
+  description = "Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance."
+  type        = bool
+  default     = false
+}

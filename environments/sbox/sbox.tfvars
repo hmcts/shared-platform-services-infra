@@ -93,3 +93,5 @@ apim_diagnostic_settings = {
 debug_vm = {
   enabled = true
 }
+
+global_policy_enabled = true
