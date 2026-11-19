@@ -90,4 +90,8 @@ apim_diagnostic_settings = {
   backend_response_body_bytes  = 8192
 }
 
+debug_vm = {
+  enabled = true
+}
+
 global_policy_enabled = true
