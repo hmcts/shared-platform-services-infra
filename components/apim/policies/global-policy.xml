@@ -1,9 +1,8 @@
 <policies>
     <inbound>
-%{ if portal_origin != "" ~}
         <cors allow-credentials="true" terminate-unmatched-request="false">
             <allowed-origins>
-                <origin>https://${portal_origin}</origin>
+                <origin>https://amp-portal.sandbox.api.hmcts.net</origin>
             </allowed-origins>
             <allowed-methods preflight-result-max-age="300">
                 <method>*</method>
@@ -15,7 +14,6 @@
                 <header>*</header>
             </expose-headers>
         </cors>
-%{ endif ~}
         <set-header name="X-Correlation-Id" exists-action="skip">
             <value>@(context.RequestId.ToString())</value>
         </set-header>
