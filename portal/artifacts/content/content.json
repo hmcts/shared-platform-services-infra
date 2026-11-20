@@ -2657,227 +2657,65 @@
                     {
                       "nodes": [
                         {
-                          "hyperlink": {
-                            "targetId": "contentTypes/page/contentItems/38b4a583-e611-dbf8-b945-a2d591c61614"
-                          },
-                          "label": "Explore APIs",
-                          "styles": {
-                            "appearance": "components/button/primary",
-                            "instance": {
-                              "id": "zhqnlhmoql",
-                              "padding": {
-                                "bottom": 10,
-                                "left": 20,
-                                "right": 20,
-                                "top": 10
-                              }
+                          "nodes": [
+                            {
+                              "identifier": "zaqm3",
+                              "nodes": [
+                                {
+                                  "text": "APIs",
+                                  "type": "text"
+                                }
+                              ],
+                              "styles": null,
+                              "type": "heading1"
                             }
+                          ],
+                          "type": "text-block"
+                        },
+                        {
+                          "allowViewSwitching": true,
+                          "defaultGroupByTagToEnabled": false,
+                          "detailsPageHyperlink": {
+                            "targetId": "contentTypes/page/contentItems/b3788a8f-cf32-af4a-5e21-733c0e982091"
                           },
-                          "type": "button"
+                          "filtersPosition": "popup",
+                          "itemStyleView": "list",
+                          "showApiType": true,
+                          "type": "listOfApis"
                         }
                       ],
-                      "role": "aside",
-                      "styles": {
-                        "instance": {
-                          "grid-cell": {
-                            "md": {
-                              "alignment": {
-                                "horizontal": "start",
-                                "vertical": "center"
-                              },
-                              "position": {
-                                "col": 1,
-                                "row": 1
-                              },
-                              "span": {
-                                "cols": 1,
-                                "rows": 1
-                              }
-                            },
-                            "xl": {
-                              "alignment": {
-                                "horizontal": "start",
-                                "vertical": "start"
-                              },
-                              "overflow": null
-                            },
-                            "xs": {
-                              "position": {
-                                "col": 1,
-                                "row": 2
-                              },
-                              "span": {
-                                "cols": 1,
-                                "rows": 1
-                              }
-                            }
-                          },
-                          "id": "omeapvnfdi",
-                          "padding": {
-                            "xs": {
-                              "bottom": 50,
-                              "left": 20,
-                              "right": 20
-                            }
-                          }
-                        }
-                      },
-                      "type": "grid-cell"
-                    },
-                    {
-                      "nodes": null,
                       "role": "article",
                       "styles": {
                         "instance": {
                           "grid-cell": {
+                            "xs": {
+                              "alignment": {
+                                "horizontal": "center",
+                                "vertical": "center"
+                              },
+                              "position": {
+                                "col": 1,
+                                "row": 1
+                              },
+                              "span": {
+                                "cols": 1,
+                                "rows": 1
+                              }
+                            }
+                          },
+                          "id": "lfwpzxvkue",
+                          "padding": {
                             "md": {
-                              "alignment": {
-                                "horizontal": "center",
-                                "vertical": "center"
-                              },
-                              "position": {
-                                "col": 2,
-                                "row": 1
-                              },
-                              "span": {
-                                "cols": 1,
-                                "rows": 1
-                              }
-                            },
-                            "xl": {
-                              "alignment": {
-                                "horizontal": "center",
-                                "vertical": "center"
-                              }
+                              "bottom": 15,
+                              "left": 15,
+                              "right": 15,
+                              "top": 15
                             },
                             "xs": {
-                              "position": {
-                                "col": 1,
-                                "row": 1
-                              },
-                              "span": {
-                                "cols": 1,
-                                "rows": 1
-                              }
-                            }
-                          },
-                          "id": "jrrobypadz",
-                          "padding": {
-                            "xs": {
-                              "bottom": 40,
-                              "right": 10,
-                              "top": 40
-                            }
-                          }
-                        }
-                      },
-                      "type": "grid-cell"
-                    }
-                  ],
-                  "styles": {
-                    "instance": {
-                      "grid": {
-                        "md": {
-                          "cols": [
-                            "5fr",
-                            "7fr"
-                          ],
-                          "rows": [
-                            "auto"
-                          ]
-                        },
-                        "xs": {
-                          "cols": [
-                            "1fr"
-                          ],
-                          "rows": [
-                            "auto",
-                            "auto"
-                          ]
-                        }
-                      },
-                      "id": "abzfkynpvf",
-                      "margin": {
-                        "xs": {
-                          "left": "auto",
-                          "right": "auto"
-                        }
-                      },
-                      "padding": {
-                        "xs": {
-                          "bottom": 5,
-                          "left": 0,
-                          "right": 0,
-                          "top": 0
-                        }
-                      },
-                      "size": {
-                        "maxWidth": "1400px",
-                        "minHeight": "700px"
-                      }
-                    }
-                  },
-                  "type": "grid"
-                }
-              ],
-              "styles": {
-                "instance": {
-                  "background": {
-                    "images": [
-                      {
-                        "position": "center center",
-                        "repeat": "no-repeat",
-                        "size": "cover",
-                        "sourceId": "contentTypes/blob/contentItems/54635f91-230a-28fd-a532-c246f2356f0f"
-                      }
-                    ]
-                  },
-                  "id": "aerdouvoot",
-                  "stickTo": {
-                    "lg": "none",
-                    "md": "none",
-                    "xl": "none",
-                    "xs": "none"
-                  }
-                }
-              },
-              "type": "layout-section"
-            },
-            {
-              "nodes": [
-                {
-                  "nodes": [
-                    {
-                      "nodes": null,
-                      "role": "article",
-                      "styles": {
-                        "instance": {
-                          "grid-cell": {
-                            "xl": {
-                              "alignment": {
-                                "horizontal": "center",
-                                "vertical": "top"
-                              }
-                            },
-                            "xs": {
-                              "alignment": {
-                                "horizontal": "center",
-                                "vertical": "top"
-                              },
-                              "position": {
-                                "col": 1,
-                                "row": 1
-                              },
-                              "span": {
-                                "cols": 1,
-                                "rows": 1
-                              }
-                            }
-                          },
-                          "id": "omovqpozlr",
-                          "padding": {
-                            "xs": {
-                              "bottom": 20
+                              "bottom": 5,
+                              "left": 5,
+                              "right": 5,
+                              "top": 5
                             }
                           }
                         }
@@ -2897,14 +2735,14 @@
                           ]
                         }
                       },
-                      "id": "eidwzurrsq",
+                      "id": "ouuzdgusov",
                       "margin": {
                         "md": {
                           "bottom": 15,
                           "top": 15
                         },
                         "xl": {
-                          "bottom": 150,
+                          "bottom": 25,
                           "top": 25
                         },
                         "xs": {
@@ -2914,22 +2752,19 @@
                           "top": 10
                         }
                       },
-                      "padding": {
-                        "md": {
-                          "bottom": 15,
-                          "left": 15,
-                          "right": 15,
-                          "top": 15
-                        },
-                        "xs": {
-                          "bottom": 5,
-                          "left": 5,
-                          "right": 5,
-                          "top": 5
-                        }
-                      },
                       "size": {
-                        "maxWidth": "1400px"
+                        "lg": {
+                          "maxWidth": 960
+                        },
+                        "md": {
+                          "maxWidth": 720
+                        },
+                        "sm": {
+                          "maxWidth": 540
+                        },
+                        "xl": {
+                          "maxWidth": "1400px"
+                        }
                       }
                     }
                   },
@@ -2938,21 +2773,8 @@
               ],
               "styles": {
                 "instance": {
-                  "background": {
-                    "images": [
-                      {
-                        "position": "center center",
-                        "repeat": "no-repeat",
-                        "size": "cover",
-                        "sourceId": "contentTypes/blob/contentItems/54635f91-230a-28fd-a532-c246f2356f0f"
-                      }
-                    ]
-                  },
-                  "id": "gpgvbrfcfq",
+                  "id": "kdsspddtmn",
                   "stickTo": {
-                    "lg": "none",
-                    "md": "none",
-                    "sm": "none",
                     "xl": "none"
                   }
                 }
@@ -3704,19 +3526,9 @@
               "label": "Main menu",
               "navigationItems": [
                 {
-                  "id": "0901ccd9-9c01-8a2b-5d86-7edd429f3a9a",
-                  "label": "Home",
-                  "targetId": "contentTypes/page/contentItems/e0987ca1-f458-b546-7697-7be594b35583"
-                },
-                {
                   "id": "32fea618-15ed-f8ab-e3fa-ec71a144632f",
                   "label": "APIs",
                   "targetId": "contentTypes/page/contentItems/38b4a583-e611-dbf8-b945-a2d591c61614"
-                },
-                {
-                  "id": "775bc451-92f1-8463-f06c-0251fc529bd9",
-                  "label": "Products",
-                  "targetId": "contentTypes/page/contentItems/9862f795-6e36-217e-6dc7-cf7226591267"
                 }
               ]
             },
