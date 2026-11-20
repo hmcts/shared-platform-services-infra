@@ -5,11 +5,16 @@ locals {
   is_sbox = var.env == "sbox"
 
   # azure-private-dns uses a different service connection in sandbox.
+  # Its stages moved to workload identity federation (WIF) service connections on 13 Nov 2026,
+  # which run as different identities. The pre-WIF ones stay until they are retired.
   private_dns_pipeline_principal_ids = var.env == "sbox" ? toset([
-    "b8f08f77-4ce2-43d5-a23b-c7ca735eca02", # dts-cftptl-intsvc
-    "2070d748-c35c-478f-a5ca-ec8a5c4ff10d"  # dts-cftsbox-intsvc
+    "b8f08f77-4ce2-43d5-a23b-c7ca735eca02", # dts-cftptl-intsvc (pre-WIF)
+    "2070d748-c35c-478f-a5ca-ec8a5c4ff10d", # dts-cftsbox-intsvc (pre-WIF)
+    "f29837aa-bfa4-4340-a8c2-a455cda3bb9a", # DTS-CFTPTL-INTSVC-WIF-mi
+    "1f9cdd02-8d12-46f4-b9c5-6bb052128255"  # DTS-CFTSBOX-INTSVC-WIF-mi
     ]) : toset([
-    "b8f08f77-4ce2-43d5-a23b-c7ca735eca02"
+    "b8f08f77-4ce2-43d5-a23b-c7ca735eca02", # dts-cftptl-intsvc (pre-WIF)
+    "f29837aa-bfa4-4340-a8c2-a455cda3bb9a"  # DTS-CFTPTL-INTSVC-WIF-mi
   ])
 
   amp_role_assignment = {
@@ -83,8 +88,8 @@ resource "azurerm_key_vault" "extid" {
   tags = module.ctags.common_tags
 }
 
-# Grant the azure-private-dns pipeline SPN Network Contributor on the SPS platform VNet.
-# SPN object ID: b8f08f77-4ce2-43d5-a23b-c7ca735eca02 (DTS Bootstrap)
+# Grant the azure-private-dns pipeline identities Network Contributor on the SPS platform VNet.
+# Identities are listed in local.private_dns_pipeline_principal_ids.
 resource "azurerm_role_assignment" "private_dns_vnet_join" {
   for_each             = local.private_dns_pipeline_principal_ids
   scope                = module.networking.vnet_ids["vnet"]
