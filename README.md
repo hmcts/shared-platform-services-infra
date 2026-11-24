@@ -26,6 +26,39 @@ for full documentation including:
 - Environment-specific configuration
 - Rollback guidance
 
+## APIM token-translation identity
+
+`apim_token_translation_identity_enabled` defaults to `false` and is enabled
+only in `environments/sbox/sbox.tfvars`. The APIM component creates
+`sps-api-mgmt-sbox-token-translation` in `rg-sps-platform-sbox` and attaches it
+alongside APIM's system-assigned identity. The existing system identity remains
+responsible for certificates and monitoring; no new Azure role assignments are
+required just to attach the token-translation identity.
+
+This requires the APIM module's `additional_user_assigned_managed_identity_ids`
+input to be published to the consumed `change/top_level_domain` branch before
+the SPS change is planned or applied.
+
+The APIM component exposes these outputs for the POC team:
+
+- `apim_token_translation_identity_id`: attached Azure resource ID.
+- `apim_token_translation_identity_client_id`: select this identity with the
+  `client-id` attribute in the `authentication-managed-identity` policy.
+- `apim_token_translation_identity_principal_id`: federated credential subject.
+
+Federated credentials, CP-access app registrations, CP API role assignments,
+consumer mappings and token-exchange policies are separate work. The relevant
+app registrations must share the identity's home tenant; their federated
+credentials use the identity's principal ID as subject, issuer
+`https://login.microsoftonline.com/531ff96d-0ae9-462a-8d2d-bec7c0b42082/v2.0`
+and audience `api://AzureADTokenExchange`.
+
+See [DTSPO-36726](https://hmcts.atlassian.net/browse/DTSPO-36726) and the
+[token-translation POC](https://hmcts.atlassian.net/wiki/spaces/AMP/pages/382173902).
+After deployment, verify the original system principal is unchanged, both
+identity types are enabled, and certificate settings and existing role
+assignments remain unchanged.
+
 ## Deployment pipeline
 
 Auto-generated from `azure-pipeline.yaml` — shows every `<environment>_<component>` stage and its
@@ -164,6 +197,7 @@ flowchart LR
 | <a name="input_apim_diagnostic_settings"></a> [apim\_diagnostic\_settings](#input\_apim\_diagnostic\_settings) | Configuration for the APIM Application Insights diagnostic settings | <pre>object({<br/>    sampling_percentage          = optional(number, 100)<br/>    always_log_errors            = optional(bool, true)<br/>    http_correlation_protocol    = optional(string, "W3C")<br/>    verbosity                    = optional(string, "information")<br/>    frontend_request_body_bytes  = optional(number, 0)<br/>    frontend_response_body_bytes = optional(number, 0)<br/>    backend_request_body_bytes   = optional(number, 0)<br/>    backend_response_body_bytes  = optional(number, 0)<br/>  })</pre> | `{}` | no |
 | <a name="input_apim_sku_name"></a> [apim\_sku\_name](#input\_apim\_sku\_name) | n/a | `string` | `"Developer"` | no |
 | <a name="input_apim_subscription_managers"></a> [apim\_subscription\_managers](#input\_apim\_subscription\_managers) | Managed identities granted the custom APIM subscription manager role (list/get/create/delete subscription keys) on the APIM instance. Key is a logical name, value is the identity's principal (object) ID. | `map(string)` | `{}` | no |
+| <a name="input_apim_token_translation_identity_enabled"></a> [apim\_token\_translation\_identity\_enabled](#input\_apim\_token\_translation\_identity\_enabled) | Attach a dedicated user-assigned managed identity to APIM for token translation, retaining its system identity. Enable only in environments participating in the POC. | `bool` | `false` | no |
 | <a name="input_autoShutdown"></a> [autoShutdown](#input\_autoShutdown) | n/a | `bool` | `false` | no |
 | <a name="input_builtFrom"></a> [builtFrom](#input\_builtFrom) | n/a | `string` | n/a | yes |
 | <a name="input_cpp_private_link_endpoints"></a> [cpp\_private\_link\_endpoints](#input\_cpp\_private\_link\_endpoints) | Private Endpoints in the SPS private-endpoints subnet that connect to CPP Private Link Services. | <pre>map(object({<br/>    pls_alias       = string                                  # Alias of the CPP Private Link Service<br/>    request_message = optional(string, "SPS platform access") # Shown to the PLS owner on the connection request<br/>  }))</pre> | `{}` | no |
@@ -178,7 +212,7 @@ flowchart LR
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_expiresAfter"></a> [expiresAfter](#input\_expiresAfter) | Date when Sandbox resources can be deleted. Format: YYYY-MM-DD | `string` | `"3000-01-01"` | no |
 | <a name="input_frontends"></a> [frontends](#input\_frontends) | n/a | `map` | `{}` | no |
-| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id       = optional(string)<br/>    cert_name          = optional(string)<br/>  })</pre> | `{}` | no |
+| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id = optional(string)<br/>    cert_name    = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_global_policy_enabled"></a> [global\_policy\_enabled](#input\_global\_policy\_enabled) | Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance. | `bool` | `false` | no |
 | <a name="input_hub_app_gw_private_ip_address"></a> [hub\_app\_gw\_private\_ip\_address](#input\_hub\_app\_gw\_private\_ip\_address) | n/a | `list` | `[]` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | Configuration for the APIM identity provider | <pre>object({<br/>    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")<br/>    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")<br/>  })</pre> | `{}` | no |
@@ -238,6 +272,7 @@ flowchart LR
 | [azurerm_api_management_policy.global](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/api_management_policy) | resource |
 | [azurerm_role_assignment.apim_subscription_manager](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_assignment) | resource |
 | [azurerm_role_definition.apim_subscription_manager](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/role_definition) | resource |
+| [azurerm_user_assigned_identity.token_translation](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/resources/user_assigned_identity) | resource |
 | [azurerm_key_vault.central_app_registration](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault) | data source |
 | [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault) | data source |
 | [azurerm_key_vault_certificate.certificate](https://registry.terraform.io/providers/hashicorp/azurerm/4.80.0/docs/data-sources/key_vault_certificate) | data source |
@@ -262,6 +297,7 @@ flowchart LR
 | <a name="input_apim_diagnostic_settings"></a> [apim\_diagnostic\_settings](#input\_apim\_diagnostic\_settings) | Configuration for the APIM Application Insights diagnostic settings | <pre>object({<br/>    sampling_percentage          = optional(number, 100)<br/>    always_log_errors            = optional(bool, true)<br/>    http_correlation_protocol    = optional(string, "W3C")<br/>    verbosity                    = optional(string, "information")<br/>    frontend_request_body_bytes  = optional(number, 0)<br/>    frontend_response_body_bytes = optional(number, 0)<br/>    backend_request_body_bytes   = optional(number, 0)<br/>    backend_response_body_bytes  = optional(number, 0)<br/>  })</pre> | `{}` | no |
 | <a name="input_apim_sku_name"></a> [apim\_sku\_name](#input\_apim\_sku\_name) | n/a | `string` | `"Developer"` | no |
 | <a name="input_apim_subscription_managers"></a> [apim\_subscription\_managers](#input\_apim\_subscription\_managers) | Managed identities granted the custom APIM subscription manager role (list/get/create/delete subscription keys) on the APIM instance. Key is a logical name, value is the identity's principal (object) ID. | `map(string)` | `{}` | no |
+| <a name="input_apim_token_translation_identity_enabled"></a> [apim\_token\_translation\_identity\_enabled](#input\_apim\_token\_translation\_identity\_enabled) | Attach a dedicated user-assigned managed identity to APIM for token translation, retaining its system identity. Enable only in environments participating in the POC. | `bool` | `false` | no |
 | <a name="input_autoShutdown"></a> [autoShutdown](#input\_autoShutdown) | n/a | `bool` | `false` | no |
 | <a name="input_builtFrom"></a> [builtFrom](#input\_builtFrom) | n/a | `string` | n/a | yes |
 | <a name="input_cpp_private_link_endpoints"></a> [cpp\_private\_link\_endpoints](#input\_cpp\_private\_link\_endpoints) | Private Endpoints in the SPS private-endpoints subnet that connect to CPP Private Link Services. | <pre>map(object({<br/>    pls_alias       = string                                  # Alias of the CPP Private Link Service<br/>    request_message = optional(string, "SPS platform access") # Shown to the PLS owner on the connection request<br/>  }))</pre> | `{}` | no |
@@ -276,7 +312,7 @@ flowchart LR
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_expiresAfter"></a> [expiresAfter](#input\_expiresAfter) | Date when Sandbox resources can be deleted. Format: YYYY-MM-DD | `string` | `"3000-01-01"` | no |
 | <a name="input_frontends"></a> [frontends](#input\_frontends) | n/a | `map` | `{}` | no |
-| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id       = optional(string)<br/>    cert_name          = optional(string)<br/>  })</pre> | `{}` | no |
+| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id = optional(string)<br/>    cert_name    = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_global_policy_enabled"></a> [global\_policy\_enabled](#input\_global\_policy\_enabled) | Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance. | `bool` | `false` | no |
 | <a name="input_hub_app_gw_private_ip_address"></a> [hub\_app\_gw\_private\_ip\_address](#input\_hub\_app\_gw\_private\_ip\_address) | n/a | `list` | `[]` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | Configuration for the APIM identity provider | <pre>object({<br/>    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")<br/>    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")<br/>  })</pre> | `{}` | no |
@@ -299,6 +335,9 @@ flowchart LR
 | Name | Description |
 |------|-------------|
 | <a name="output_apim_name"></a> [apim\_name](#output\_apim\_name) | The name of the APIM service. Used by the portal deployment pipeline stage. |
+| <a name="output_apim_token_translation_identity_client_id"></a> [apim\_token\_translation\_identity\_client\_id](#output\_apim\_token\_translation\_identity\_client\_id) | Client ID to select in APIM's authentication-managed-identity policy, or null when disabled. |
+| <a name="output_apim_token_translation_identity_id"></a> [apim\_token\_translation\_identity\_id](#output\_apim\_token\_translation\_identity\_id) | Resource ID of the dedicated token-translation identity, or null when disabled. |
+| <a name="output_apim_token_translation_identity_principal_id"></a> [apim\_token\_translation\_identity\_principal\_id](#output\_apim\_token\_translation\_identity\_principal\_id) | Principal ID to use as the subject of an app registration's federated credential, or null when disabled. |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | The resource group containing the APIM service. Used by the portal deployment pipeline stage. |
 
 ### `apim_appgw`
@@ -346,6 +385,7 @@ flowchart LR
 | <a name="input_apim_diagnostic_settings"></a> [apim\_diagnostic\_settings](#input\_apim\_diagnostic\_settings) | Configuration for the APIM Application Insights diagnostic settings | <pre>object({<br/>    sampling_percentage          = optional(number, 100)<br/>    always_log_errors            = optional(bool, true)<br/>    http_correlation_protocol    = optional(string, "W3C")<br/>    verbosity                    = optional(string, "information")<br/>    frontend_request_body_bytes  = optional(number, 0)<br/>    frontend_response_body_bytes = optional(number, 0)<br/>    backend_request_body_bytes   = optional(number, 0)<br/>    backend_response_body_bytes  = optional(number, 0)<br/>  })</pre> | `{}` | no |
 | <a name="input_apim_sku_name"></a> [apim\_sku\_name](#input\_apim\_sku\_name) | n/a | `string` | `"Developer"` | no |
 | <a name="input_apim_subscription_managers"></a> [apim\_subscription\_managers](#input\_apim\_subscription\_managers) | Managed identities granted the custom APIM subscription manager role (list/get/create/delete subscription keys) on the APIM instance. Key is a logical name, value is the identity's principal (object) ID. | `map(string)` | `{}` | no |
+| <a name="input_apim_token_translation_identity_enabled"></a> [apim\_token\_translation\_identity\_enabled](#input\_apim\_token\_translation\_identity\_enabled) | Attach a dedicated user-assigned managed identity to APIM for token translation, retaining its system identity. Enable only in environments participating in the POC. | `bool` | `false` | no |
 | <a name="input_autoShutdown"></a> [autoShutdown](#input\_autoShutdown) | n/a | `bool` | `false` | no |
 | <a name="input_builtFrom"></a> [builtFrom](#input\_builtFrom) | n/a | `string` | n/a | yes |
 | <a name="input_cpp_private_link_endpoints"></a> [cpp\_private\_link\_endpoints](#input\_cpp\_private\_link\_endpoints) | Private Endpoints in the SPS private-endpoints subnet that connect to CPP Private Link Services. | <pre>map(object({<br/>    pls_alias       = string                                  # Alias of the CPP Private Link Service<br/>    request_message = optional(string, "SPS platform access") # Shown to the PLS owner on the connection request<br/>  }))</pre> | `{}` | no |
@@ -360,7 +400,7 @@ flowchart LR
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_expiresAfter"></a> [expiresAfter](#input\_expiresAfter) | Date when Sandbox resources can be deleted. Format: YYYY-MM-DD | `string` | `"3000-01-01"` | no |
 | <a name="input_frontends"></a> [frontends](#input\_frontends) | n/a | `map` | `{}` | no |
-| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id       = optional(string)<br/>    cert_name          = optional(string)<br/>  })</pre> | `{}` | no |
+| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id = optional(string)<br/>    cert_name    = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_global_policy_enabled"></a> [global\_policy\_enabled](#input\_global\_policy\_enabled) | Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance. | `bool` | `false` | no |
 | <a name="input_hub_app_gw_private_ip_address"></a> [hub\_app\_gw\_private\_ip\_address](#input\_hub\_app\_gw\_private\_ip\_address) | n/a | `list` | `[]` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | Configuration for the APIM identity provider | <pre>object({<br/>    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")<br/>    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")<br/>  })</pre> | `{}` | no |

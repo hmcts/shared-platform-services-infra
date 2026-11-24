@@ -163,8 +163,8 @@ variable "apim_custom_nsg_rules" {
 variable "gateway_hostname" {
   description = "Configuration for the APIM gateway custom domain and certificate"
   type = object({
-    key_vault_id       = optional(string)
-    cert_name          = optional(string)
+    key_vault_id = optional(string)
+    cert_name    = optional(string)
   })
   default = {}
 }
@@ -243,6 +243,13 @@ variable "apim_subscription_managers" {
   description = "Managed identities granted the custom APIM subscription manager role (list/get/create/delete subscription keys) on the APIM instance. Key is a logical name, value is the identity's principal (object) ID."
   type        = map(string)
   default     = {}
+}
+
+variable "apim_token_translation_identity_enabled" {
+  description = "Attach a dedicated user-assigned managed identity to APIM for token translation, retaining its system identity. Enable only in environments participating in the POC."
+  type        = bool
+  default     = false
+  nullable    = false
 }
 
 variable "global_policy_enabled" {
