@@ -10,6 +10,9 @@ apim_subscription_managers = {
   service-api-marketplace = "c3de4f49-b1f5-47ac-b178-d236f14d3dfa"
 }
 
+# User-assigned identity on sps-api-mgmt-sbox for token exchange (API Marketplace token translation POC).
+apim_token_exchange_identity_enabled = true
+
 ssl_policy = {
   policy_type          = "Predefined"
   policy_name          = "AppGwSslPolicy20220101S"

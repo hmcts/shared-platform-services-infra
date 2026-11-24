@@ -245,6 +245,12 @@ variable "apim_subscription_managers" {
   default     = {}
 }
 
+variable "apim_token_exchange_identity_enabled" {
+  description = "Create a user-assigned managed identity and attach it to APIM alongside its system-assigned identity. API policies use it to sign in as an app through a federated credential (token exchange), with no secret."
+  type        = bool
+  default     = false
+}
+
 variable "global_policy_enabled" {
   description = "Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance."
   type        = bool
