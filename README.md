@@ -59,12 +59,6 @@ After deployment, verify the original system principal is unchanged, both
 identity types are enabled, and certificate settings and existing role
 assignments remain unchanged.
 
-Run the component's mocked identity tests from `components/apim` after
-`terraform init -backend=false` with
-`terraform test -filter=tests/managed-identity.tftest.hcl`. Before the module
-change is published, use a temporary Terraform override selecting the local
-module checkout for validation; do not commit that override.
-
 ## Deployment pipeline
 
 Auto-generated from `azure-pipeline.yaml` — shows every `<environment>_<component>` stage and its
