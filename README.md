@@ -218,7 +218,7 @@ flowchart LR
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_expiresAfter"></a> [expiresAfter](#input\_expiresAfter) | Date when Sandbox resources can be deleted. Format: YYYY-MM-DD | `string` | `"3000-01-01"` | no |
 | <a name="input_frontends"></a> [frontends](#input\_frontends) | n/a | `map` | `{}` | no |
-| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id       = optional(string)<br/>    cert_name          = optional(string)<br/>  })</pre> | `{}` | no |
+| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id = optional(string)<br/>    cert_name    = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_global_policy_enabled"></a> [global\_policy\_enabled](#input\_global\_policy\_enabled) | Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance. | `bool` | `false` | no |
 | <a name="input_hub_app_gw_private_ip_address"></a> [hub\_app\_gw\_private\_ip\_address](#input\_hub\_app\_gw\_private\_ip\_address) | n/a | `list` | `[]` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | Configuration for the APIM identity provider | <pre>object({<br/>    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")<br/>    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")<br/>  })</pre> | `{}` | no |
@@ -318,7 +318,7 @@ flowchart LR
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_expiresAfter"></a> [expiresAfter](#input\_expiresAfter) | Date when Sandbox resources can be deleted. Format: YYYY-MM-DD | `string` | `"3000-01-01"` | no |
 | <a name="input_frontends"></a> [frontends](#input\_frontends) | n/a | `map` | `{}` | no |
-| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id       = optional(string)<br/>    cert_name          = optional(string)<br/>  })</pre> | `{}` | no |
+| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id = optional(string)<br/>    cert_name    = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_global_policy_enabled"></a> [global\_policy\_enabled](#input\_global\_policy\_enabled) | Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance. | `bool` | `false` | no |
 | <a name="input_hub_app_gw_private_ip_address"></a> [hub\_app\_gw\_private\_ip\_address](#input\_hub\_app\_gw\_private\_ip\_address) | n/a | `list` | `[]` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | Configuration for the APIM identity provider | <pre>object({<br/>    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")<br/>    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")<br/>  })</pre> | `{}` | no |
@@ -406,7 +406,7 @@ flowchart LR
 | <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
 | <a name="input_expiresAfter"></a> [expiresAfter](#input\_expiresAfter) | Date when Sandbox resources can be deleted. Format: YYYY-MM-DD | `string` | `"3000-01-01"` | no |
 | <a name="input_frontends"></a> [frontends](#input\_frontends) | n/a | `map` | `{}` | no |
-| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id       = optional(string)<br/>    cert_name          = optional(string)<br/>  })</pre> | `{}` | no |
+| <a name="input_gateway_hostname"></a> [gateway\_hostname](#input\_gateway\_hostname) | Configuration for the APIM gateway custom domain and certificate | <pre>object({<br/>    key_vault_id = optional(string)<br/>    cert_name    = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_global_policy_enabled"></a> [global\_policy\_enabled](#input\_global\_policy\_enabled) | Whether terraform owns the APIM global policy. Off by default: enabling it replaces whatever global policy is live in that environment, for every API on the instance. | `bool` | `false` | no |
 | <a name="input_hub_app_gw_private_ip_address"></a> [hub\_app\_gw\_private\_ip\_address](#input\_hub\_app\_gw\_private\_ip\_address) | n/a | `list` | `[]` | no |
 | <a name="input_identity_provider"></a> [identity\_provider](#input\_identity\_provider) | Configuration for the APIM identity provider | <pre>object({<br/>    app_id_secret_name     = optional(string, "api-marketplace-apim-nonprod-app-id")<br/>    app_secret_secret_name = optional(string, "api-marketplace-apim-nonprod-secret")<br/>  })</pre> | `{}` | no |
