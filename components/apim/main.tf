@@ -60,7 +60,7 @@ module "api-mgmt" {
   }
 
   # Token exchange identity, attached alongside the system-assigned identity (see identity.tf).
-  additional_user_assigned_identity_ids = azurerm_user_assigned_identity.token_exchange[*].id
+  additional_user_assigned_managed_identity_ids = azurerm_user_assigned_identity.token_exchange[*].id
 }
 
 resource "azurerm_api_management_named_value" "environment" {
