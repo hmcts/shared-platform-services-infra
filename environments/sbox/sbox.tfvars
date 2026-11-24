@@ -4,6 +4,8 @@ env          = "sbox"
 subscription = "sbox"
 autoShutdown = true
 
+apim_token_translation_identity_enabled = true
+
 # Managed identities allowed to manage APIM subscription keys on sps-api-mgmt-sbox.
 apim_subscription_managers = {
   # amp-sandbox-mi (DCD-CFT-Sandbox / managed-identities-sandbox-rg), used by service-api-marketplace
@@ -65,8 +67,8 @@ networking = {
   vpn = {}
 }
 gateway_hostname = {
-  key_vault_id       = "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/sps-platform-sbox-rg/providers/Microsoft.KeyVault/vaults/acmedtsspssbox"
-  cert_name          = "sandbox-api-hmcts-net"
+  key_vault_id = "/subscriptions/bd2864ed-4f3e-45ed-9c6a-8d179674bab1/resourceGroups/sps-platform-sbox-rg/providers/Microsoft.KeyVault/vaults/acmedtsspssbox"
+  cert_name    = "sandbox-api-hmcts-net"
 }
 
 developer_portal = {

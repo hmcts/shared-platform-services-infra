@@ -7,22 +7,23 @@ module "ctags" {
 }
 
 module "api-mgmt" {
-  source                               = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=change/top_level_domain"
-  location                             = var.location
-  custom_name                          = "sps-api-mgmt-${var.subscription}"
-  sku_name                             = var.apim_sku_name
-  virtual_network_resource_group       = local.vnet_rg
-  virtual_network_name                 = local.vnet_name
-  environment                          = var.env
-  virtual_network_type                 = "Internal"
-  additional_routes_apim               = var.additional_routes_apim
-  department                           = var.department
-  common_tags                          = module.ctags.common_tags
-  route_next_hop_in_ip_address         = var.networking.hub.next_hop_ip
-  publisher_email                      = var.publisher_email
-  disable_trusted_service_connectivity = var.disable_trusted_service_connectivity
-  custom_nsg_rules                     = var.apim_custom_nsg_rules
-  cert_domain                          = "api"
+  source                                        = "git::https://github.com/hmcts/cnp-module-api-mgmt-private.git?ref=change/top_level_domain"
+  additional_user_assigned_managed_identity_ids = azurerm_user_assigned_identity.token_translation[*].id
+  location                                      = var.location
+  custom_name                                   = "sps-api-mgmt-${var.subscription}"
+  sku_name                                      = var.apim_sku_name
+  virtual_network_resource_group                = local.vnet_rg
+  virtual_network_name                          = local.vnet_name
+  environment                                   = var.env
+  virtual_network_type                          = "Internal"
+  additional_routes_apim                        = var.additional_routes_apim
+  department                                    = var.department
+  common_tags                                   = module.ctags.common_tags
+  route_next_hop_in_ip_address                  = var.networking.hub.next_hop_ip
+  publisher_email                               = var.publisher_email
+  disable_trusted_service_connectivity          = var.disable_trusted_service_connectivity
+  custom_nsg_rules                              = var.apim_custom_nsg_rules
+  cert_domain                                   = "api"
   custom_gateway_hostnames = [
     { host_name = join(".", compact(["sps-api-mgmt", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])) },
     { host_name = join(".", compact(["sps-api-mgmt-appgw", lookup(local.fqdn_map, var.subscription, var.subscription), "api.hmcts.net"])), default_ssl_binding = false },
