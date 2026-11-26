@@ -1,0 +1,196 @@
+name: Live Resource Topology (sbox)
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 5 * * *" # 05:00 UTC daily
+
+permissions:
+  id-token: write # required for Azure OIDC login
+  contents: write
+
+concurrency:
+  group: live-topology-sbox
+  cancel-in-progress: true
+
+env:
+  AZURE_TENANT_ID: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+  AZURE_SUBSCRIPTION_ID: "bd2864ed-4f3e-45ed-9c6a-8d179674bab1"
+  RESOURCE_GROUP: "rg-sps-platform-sbox"
+
+jobs:
+  generate-topology:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_SBOX_READER_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Query Resource Graph for sbox resource group
+        run: |
+          set -euo pipefail
+          az graph query -q "Resources | where resourceGroup =~ '${RESOURCE_GROUP}'" \
+            --subscriptions "${AZURE_SUBSCRIPTION_ID}" \
+            -o json | python3 -c "import sys,json; print(json.dumps(json.load(sys.stdin)['data']))" \
+            > /tmp/resources.json
+
+      - name: Generate Mermaid diagram from real resource relationships
+        run: |
+          python3 - <<'PYEOF'
+          import json
+
+          with open("/tmp/resources.json") as f:
+              resources = json.load(f)
+
+          by_id = {r["id"].lower(): r for r in resources}
+          tenant_id = "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+          subscription_id = "bd2864ed-4f3e-45ed-9c6a-8d179674bab1"
+
+          def node_id(resource_id):
+              # Stable, Mermaid-safe node id derived from the resource name.
+              name = resource_id.rstrip("/").split("/")[-1]
+              return "".join(c if c.isalnum() else "_" for c in name)
+
+          # Emoji stand-ins for Azure resource icons (Mermaid can't embed real Azure
+          # icon assets on GitHub's renderer), keyed by lowercase ARM resource type.
+          ICONS = {
+              "microsoft.network/virtualnetworks": "🌐",
+              "microsoft.network/networksecuritygroups": "🛡️",
+              "microsoft.network/routetables": "🧭",
+              "microsoft.network/publicipaddresses": "📶",
+              "microsoft.network/applicationgateways": "🚪",
+              "microsoft.network/applicationgatewaywebapplicationfirewallpolicies": "🧱",
+              "microsoft.apimanagement/service": "🧩",
+              "microsoft.insights/components": "📊",
+              "microsoft.insights/activitylogalerts": "🔔",
+              "microsoft.managedidentity/userassignedidentities": "🪪",
+              "microsoft.keyvault/vaults": "🔑",
+              "microsoft.storage/storageaccounts": "💾",
+          }
+
+          def short_type(rtype):
+              return rtype.split("/")[-1]
+
+          def icon_for(rtype):
+              return ICONS.get(rtype.lower(), "📦")
+
+          def portal_url(resource_id):
+              return f"https://portal.azure.com/#@{tenant_id}/resource{resource_id}/overview"
+
+          nodes = {}
+          edges = []
+
+          def add_node(resource_id):
+              resource_id_l = resource_id.lower()
+              res = by_id.get(resource_id_l)
+              if not res:
+                  return None
+              nid = node_id(resource_id)
+              if nid not in nodes:
+                  label = f"{icon_for(res['type'])} {short_type(res['type'])}<br/>{res['name']}"
+                  nodes[nid] = (label, resource_id)
+              return nid
+
+          def add_edge(src_id, dst_id, label=None):
+              src = add_node(src_id)
+              dst = add_node(dst_id)
+              if src and dst:
+                  edges.append((src, dst, label))
+
+          # Every resource in the RG is a node, even if it has no discovered relationships.
+          for r in resources:
+              add_node(r["id"])
+
+
+          for r in resources:
+              rtype = r["type"].lower()
+              props = r.get("properties") or {}
+
+              if rtype == "microsoft.network/virtualnetworks":
+                  for subnet in props.get("subnets", []):
+                      sprops = subnet.get("properties", {})
+                      nsg = sprops.get("networkSecurityGroup", {}).get("id")
+                      rt = sprops.get("routeTable", {}).get("id")
+                      if nsg:
+                          add_edge(r["id"], nsg, "subnet NSG")
+                      if rt:
+                          add_edge(r["id"], rt, "subnet route table")
+
+              elif rtype == "microsoft.network/applicationgateways":
+                  for ipconf in props.get("gatewayIPConfigurations", []):
+                      subnet_id = ipconf.get("properties", {}).get("subnet", {}).get("id")
+                      if subnet_id:
+                          vnet_id = "/".join(subnet_id.split("/")[:-2])
+                          add_edge(vnet_id, r["id"], "deployed in")
+                  for feip in props.get("frontendIPConfigurations", []):
+                      pip_id = feip.get("properties", {}).get("publicIPAddress", {}).get("id")
+                      if pip_id:
+                          add_edge(r["id"], pip_id, "frontend IP")
+                  fw_policy = props.get("firewallPolicy", {}).get("id")
+                  if fw_policy:
+                      add_edge(r["id"], fw_policy, "WAF policy")
+                  for identity_id in (r.get("identity", {}).get("userAssignedIdentities") or {}):
+                      add_edge(r["id"], identity_id, "managed identity")
+
+              elif rtype == "microsoft.apimanagement/service":
+                  subnet_id = props.get("virtualNetworkConfiguration", {}).get("subnetResourceId")
+                  if subnet_id:
+                      vnet_id = "/".join(subnet_id.split("/")[:-2])
+                      add_edge(vnet_id, r["id"], "deployed in")
+                  pip_id = props.get("publicIpAddressId")
+                  if pip_id:
+                      add_edge(r["id"], pip_id, "public IP")
+
+              elif rtype == "microsoft.apimanagement/service/loggers":
+                  ai_id = props.get("resourceId")
+                  parent_id = "/".join(r["id"].split("/")[:-2])
+                  if ai_id:
+                      add_edge(parent_id, ai_id, "logs to")
+
+              elif rtype == "microsoft.insights/activitylogalerts":
+                  for scope in props.get("scopes", []):
+                      add_edge(scope, r["id"], "alerts on")
+
+          lines = ["```mermaid", "flowchart LR", f"  subgraph RG[\"{resources[0]['resourceGroup'] if resources else 'rg-sps-platform-sbox'}\"]"]
+          for nid, (label, _rid) in nodes.items():
+              lines.append(f'    {nid}["{label}"]')
+          for src, dst, label in edges:
+              if label:
+                  lines.append(f"    {src} -->|{label}| {dst}")
+              else:
+                  lines.append(f"    {src} --> {dst}")
+          lines.append("  end")
+          for nid, (_label, rid) in nodes.items():
+              lines.append(f'  click {nid} "{portal_url(rid)}" "Open in Azure Portal"')
+          lines.append("```")
+
+          with open("/tmp/sbox-topology.md", "w") as f:
+              f.write("\n".join(lines) + "\n")
+          PYEOF
+
+      - name: Inject diagram into README.md
+        run: |
+          awk -v docfile=/tmp/sbox-topology.md '
+            BEGIN { while ((getline line < docfile) > 0) doc = doc line "\n" }
+            /<!-- BEGIN_LIVE_TOPOLOGY_SBOX -->/ { print; printf "%s", doc; skip=1; next }
+            /<!-- END_LIVE_TOPOLOGY_SBOX -->/ { skip=0 }
+            skip { next }
+            { print }
+          ' README.md > README.md.tmp
+          mv README.md.tmp README.md
+
+      - name: Commit and push diagram changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: refresh live sbox resource topology [skip ci]"
+          file_pattern: "README.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"

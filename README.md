@@ -26,6 +26,16 @@ for full documentation including:
 - Environment-specific configuration
 - Rollback guidance
 
+## Live resource topology (sbox)
+
+Auto-generated nightly (and on manual trigger) from a live Azure Resource Graph query against
+`rg-sps-platform-sbox` — reflects what's **actually deployed**, not just Terraform intent. Edges are
+derived from real ARM resource properties (subnet/NSG/route-table associations, Application Gateway
+and APIM network/identity config), not inferred from naming. Click a node to open it in the Azure Portal.
+
+<!-- BEGIN_LIVE_TOPOLOGY_SBOX -->
+<!-- END_LIVE_TOPOLOGY_SBOX -->
+
 ## Deployment pipeline
 
 Auto-generated from `azure-pipeline.yaml` — shows every `<environment>_<component>` stage and its
