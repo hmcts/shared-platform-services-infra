@@ -5,7 +5,9 @@ resource "azurerm_api_management_policy" "global" {
 
   api_management_id = module.api-mgmt.id
 
-  xml_content = file("${path.module}/policies/global-policy.xml")
+  xml_content = templatefile("${path.module}/policies/global-policy.xml.tftpl", {
+    developer_portal_domain = var.developer_portal.custom_domain_name
+  })
 
   depends_on = [module.api-mgmt]
 }

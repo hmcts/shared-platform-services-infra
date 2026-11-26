@@ -52,3 +52,5 @@ identity_provider = {
   app_id_secret_name     = "api-marketplace-apim-prod-app-id"
   app_secret_secret_name = "api-marketplace-apim-prod-secret"
 }
+
+global_policy_enabled = true
