@@ -66,3 +66,12 @@ cross_tenant_peering = {
     }
   }
 }
+
+# Private Endpoints to CPP Private Link Services (replaces VNet peering to the CPP WAF load balancer).
+# Connection is auto-approved by the PLS for this subscription (cpp-automation-terraform, 71-private-link-service.tf).
+cpp_private_link_endpoints = {
+  "sit-dmzwaf" = {
+    pls_alias       = "pls-sit-dmzwaf-01.d10f3735-ec6e-4ea2-87b0-4c6448376b8c.uksouth.azure.privatelinkservice"
+    request_message = "SPS Preview (Dev) CPP Access to SIT WAF"
+  }
+}
