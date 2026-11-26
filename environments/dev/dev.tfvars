@@ -75,3 +75,7 @@ cpp_private_link_endpoints = {
     request_message = "SPS Preview (Dev) CPP Access to SIT WAF"
   }
 }
+
+debug_vm = {
+  enabled = true
+}
