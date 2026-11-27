@@ -9,7 +9,13 @@
             <set-variable name="cpAudience" value="<CP publisher app client ID>" />
             <set-variable name="cpAppId" value="<consumer's CP-access app client ID>" />   (from the API's client map)
             <set-variable name="cpRejectUnmapped" value="@(true)" />   (optional, default false)
+            <cache-lookup-value key="cp-token-<cpAppId>-<cpAudience>" variable-name="cpToken" />   (when cpAppId is set)
             <include-fragment fragment-id="cp-token-exchange" />
+            <cache-store-value key="cp-token-<cpAppId>-<cpAudience>" value="cpToken" duration="cpTokenCacheSeconds" />
+                                                                         (when cpTokenCacheSeconds is set)
+
+        The cache policies stay in the API: cache-lookup-value is not supported inside a policy fragment.
+        The fragment skips the CP call when cpToken is already set, and sets cpTokenCacheSeconds after a new token.
 
         cpAudience     The CP API's publisher app; the token is requested for "<cpAudience>/.default".
         cpAppId        The calling consumer's CP-access app. Each API maps its own consumers (azp => app).
@@ -49,7 +55,7 @@
     </choose>
     <choose>
         <when condition="@(!string.IsNullOrEmpty((string)context.Variables[&quot;cpAppId&quot;]))">
-            <cache-lookup-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-&quot; + (string)context.Variables[&quot;cpAudience&quot;])" variable-name="cpToken" />
+            <!-- The calling API looks up the cached CP token first: cache-lookup-value is not supported in a fragment. -->
             <choose>
                 <when condition="@(!context.Variables.ContainsKey(&quot;cpToken&quot;))">
                     <!-- APIM's user-assigned identity token is the client assertion: no secret is stored. -->
@@ -77,6 +83,19 @@
                                 <set-body>{"error":"Could not get a token from CP."}</set-body>
                             </return-response>
                         </when>
+                        <!-- Entra throttled APIM: temporary, so tell the consumer to retry rather than reporting a permission failure. -->
+                        <when condition="@(((IResponse)context.Variables[&quot;cpTokenResponse&quot;]).StatusCode == 429)">
+                            <return-response>
+                                <set-status code="503" reason="Service Unavailable" />
+                                <set-header name="Retry-After" exists-action="override">
+                                    <value>@(((IResponse)context.Variables[&quot;cpTokenResponse&quot;]).Headers.GetValueOrDefault(&quot;Retry-After&quot;, &quot;60&quot;))</value>
+                                </set-header>
+                                <set-header name="Content-Type" exists-action="override">
+                                    <value>application/json</value>
+                                </set-header>
+                                <set-body>{"error":"CP token service is busy. Retry later."}</set-body>
+                            </return-response>
+                        </when>
                         <!-- CP refused, for example AADSTS501051 when the CP-access app has no role. -->
                         <when condition="@(((IResponse)context.Variables[&quot;cpTokenResponse&quot;]).StatusCode != 200)">
                             <return-response>
@@ -90,7 +109,8 @@
                     </choose>
                     <set-variable name="cpTokenBody" value="@(((IResponse)context.Variables[&quot;cpTokenResponse&quot;]).Body.As&lt;JObject&gt;())" />
                     <set-variable name="cpToken" value="@((string)((JObject)context.Variables[&quot;cpTokenBody&quot;])[&quot;access_token&quot;])" />
-                    <cache-store-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-&quot; + (string)context.Variables[&quot;cpAudience&quot;])" value="@((string)context.Variables[&quot;cpToken&quot;])" duration="@(Math.Max(60, (int)((JObject)context.Variables[&quot;cpTokenBody&quot;])[&quot;expires_in&quot;] - ${cache_buffer_seconds}))" />
+                    <!-- The calling API caches cpToken for this many seconds (cache-store-value stays out of the fragment too). -->
+                    <set-variable name="cpTokenCacheSeconds" value="@(Math.Max(60, (int)((JObject)context.Variables[&quot;cpTokenBody&quot;])[&quot;expires_in&quot;] - ${cache_buffer_seconds}))" />
                 </when>
             </choose>
             <set-header name="Authorization" exists-action="override">
