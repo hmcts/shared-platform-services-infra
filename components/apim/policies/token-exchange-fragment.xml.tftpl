@@ -1,0 +1,131 @@
+<fragment>
+    <!--
+        Token exchange: swaps the consumer's validated external token for a token issued by the backend's
+        tenant, for that consumer's backend-access app. APIM signs in to the backend tenant as that app,
+        using its user-assigned identity as a federated credential (no secret).
+
+        Include it in an API's inbound policy after validate-jwt:
+
+            <set-variable name="tokenExchangeTenantId" value="<backend tenant ID>" />
+            <set-variable name="tokenExchangeAudience" value="<backend API app client ID>" />
+            <set-variable name="tokenExchangeAppId" value="<consumer's backend-access app client ID>" />   (from the API's client map)
+            <set-variable name="tokenExchangeRejectUnmapped" value="@(true)" />   (optional, default false)
+            <cache-lookup-value key="token-exchange-<tenant>-<appId>-<audience>" variable-name="tokenExchangeToken" />   (when tokenExchangeAppId is set)
+            <include-fragment fragment-id="token-exchange" />
+            <cache-store-value key="token-exchange-<tenant>-<appId>-<audience>" value="tokenExchangeToken" duration="tokenExchangeCacheSeconds" />
+                                                                                   (when tokenExchangeCacheSeconds is set)
+
+        The cache policies stay in the API: cache-lookup-value is not supported inside a policy fragment.
+        The fragment skips the token request when tokenExchangeToken is already set, and sets
+        tokenExchangeCacheSeconds after a new token.
+
+        tokenExchangeTenantId
+                       Tenant that issues the backend token.
+        tokenExchangeAudience
+                       The backend API's app; the token is requested for "<audience>/.default".
+        tokenExchangeAppId
+                       The calling consumer's backend-access app. Each API maps its own consumers (azp => app).
+        tokenExchangeRejectUnmapped
+                       true: a consumer with no tokenExchangeAppId gets 403. false: its request is forwarded
+                       unchanged, with the external token.
+    -->
+    <choose>
+        <when condition="@(string.IsNullOrEmpty(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;tokenExchangeTenantId&quot;, &quot;&quot;)) || string.IsNullOrEmpty(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;tokenExchangeAudience&quot;, &quot;&quot;)))">
+            <return-response>
+                <set-status code="500" reason="Internal Server Error" />
+                <set-header name="Content-Type" exists-action="override">
+                    <value>application/json</value>
+                </set-header>
+                <set-body>{"error":"Token exchange is not configured for this API."}</set-body>
+            </return-response>
+        </when>
+    </choose>
+    <!-- The caller is the external token's azp. validate-jwt has already checked the token. -->
+    <set-variable name="extAzp" value="@{
+        var auth = context.Request.Headers.GetValueOrDefault(&quot;Authorization&quot;, &quot;&quot;);
+        var jwt = auth.StartsWith(&quot;Bearer &quot;) ? auth.Substring(7).AsJwt() : null;
+        return jwt == null ? &quot;&quot; : jwt.Claims.GetValueOrDefault(&quot;azp&quot;, &quot;&quot;);
+    }" />
+    <!-- The calling API maps the consumer to its backend-access app; empty when the consumer is not mapped. -->
+    <set-variable name="tokenExchangeAppId" value="@(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;tokenExchangeAppId&quot;, &quot;&quot;))" />
+    <choose>
+        <when condition="@(string.IsNullOrEmpty((string)context.Variables[&quot;tokenExchangeAppId&quot;]) &amp;&amp; context.Variables.GetValueOrDefault&lt;bool&gt;(&quot;tokenExchangeRejectUnmapped&quot;, false))">
+            <return-response>
+                <set-status code="403" reason="Forbidden" />
+                <set-header name="Content-Type" exists-action="override">
+                    <value>application/json</value>
+                </set-header>
+                <set-body>{"error":"This client is not enabled for this API."}</set-body>
+            </return-response>
+        </when>
+    </choose>
+    <choose>
+        <when condition="@(!string.IsNullOrEmpty((string)context.Variables[&quot;tokenExchangeAppId&quot;]))">
+            <!-- The calling API looks up the cached token first: cache-lookup-value is not supported in a fragment. -->
+            <choose>
+                <when condition="@(!context.Variables.ContainsKey(&quot;tokenExchangeToken&quot;))">
+                    <!-- APIM's user-assigned identity token is the client assertion: no secret is stored. -->
+                    <authentication-managed-identity resource="api://AzureADTokenExchange" client-id="${identity_client_id}" output-token-variable-name="miAssertion" ignore-error="false" />
+                    <send-request mode="new" response-variable-name="tokenExchangeResponse" timeout="10" ignore-error="true">
+                        <set-url>@(&quot;https://login.microsoftonline.com/&quot; + (string)context.Variables[&quot;tokenExchangeTenantId&quot;] + &quot;/oauth2/v2.0/token&quot;)</set-url>
+                        <set-method>POST</set-method>
+                        <set-header name="Content-Type" exists-action="override">
+                            <value>application/x-www-form-urlencoded</value>
+                        </set-header>
+                        <set-body>@("grant_type=client_credentials"
+                            + "&amp;client_id=" + (string)context.Variables["tokenExchangeAppId"]
+                            + "&amp;scope=" + Uri.EscapeDataString((string)context.Variables["tokenExchangeAudience"] + "/.default")
+                            + "&amp;client_assertion_type=" + Uri.EscapeDataString("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")
+                            + "&amp;client_assertion=" + (string)context.Variables["miAssertion"])</set-body>
+                    </send-request>
+                    <choose>
+                        <!-- No answer from the token endpoint, or a server error. -->
+                        <when condition="@(context.Variables[&quot;tokenExchangeResponse&quot;] == null || ((IResponse)context.Variables[&quot;tokenExchangeResponse&quot;]).StatusCode &gt;= 500)">
+                            <return-response>
+                                <set-status code="502" reason="Bad Gateway" />
+                                <set-header name="Content-Type" exists-action="override">
+                                    <value>application/json</value>
+                                </set-header>
+                                <set-body>{"error":"Could not get a token for the backend."}</set-body>
+                            </return-response>
+                        </when>
+                        <!-- Entra throttled APIM: temporary, so tell the consumer to retry rather than reporting a permission failure. -->
+                        <when condition="@(((IResponse)context.Variables[&quot;tokenExchangeResponse&quot;]).StatusCode == 429)">
+                            <return-response>
+                                <set-status code="503" reason="Service Unavailable" />
+                                <set-header name="Retry-After" exists-action="override">
+                                    <value>@(((IResponse)context.Variables[&quot;tokenExchangeResponse&quot;]).Headers.GetValueOrDefault(&quot;Retry-After&quot;, &quot;60&quot;))</value>
+                                </set-header>
+                                <set-header name="Content-Type" exists-action="override">
+                                    <value>application/json</value>
+                                </set-header>
+                                <set-body>{"error":"Token service is busy. Retry later."}</set-body>
+                            </return-response>
+                        </when>
+                        <!-- The backend tenant refused, for example AADSTS501051 when the backend-access app has no role. -->
+                        <when condition="@(((IResponse)context.Variables[&quot;tokenExchangeResponse&quot;]).StatusCode != 200)">
+                            <return-response>
+                                <set-status code="403" reason="Forbidden" />
+                                <set-header name="Content-Type" exists-action="override">
+                                    <value>application/json</value>
+                                </set-header>
+                                <set-body>{"error":"The backend has not granted this client access to this API."}</set-body>
+                            </return-response>
+                        </when>
+                    </choose>
+                    <set-variable name="tokenExchangeBody" value="@(((IResponse)context.Variables[&quot;tokenExchangeResponse&quot;]).Body.As&lt;JObject&gt;())" />
+                    <set-variable name="tokenExchangeToken" value="@((string)((JObject)context.Variables[&quot;tokenExchangeBody&quot;])[&quot;access_token&quot;])" />
+                    <!-- The calling API caches the token for this many seconds (cache-store-value stays out of the fragment too). -->
+                    <set-variable name="tokenExchangeCacheSeconds" value="@(Math.Max(60, (int)((JObject)context.Variables[&quot;tokenExchangeBody&quot;])[&quot;expires_in&quot;] - ${cache_buffer_seconds}))" />
+                </when>
+            </choose>
+            <set-header name="Authorization" exists-action="override">
+                <value>@("Bearer " + (string)context.Variables["tokenExchangeToken"])</value>
+            </set-header>
+        </when>
+    </choose>
+    <!-- For logs only: the backend identifies the caller from its own token's azp. -->
+    <set-header name="X-Client-Id" exists-action="override">
+        <value>@((string)context.Variables["extAzp"])</value>
+    </set-header>
+</fragment>
