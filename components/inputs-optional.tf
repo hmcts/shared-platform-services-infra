@@ -258,22 +258,16 @@ variable "cp_token_exchange" {
     using the token exchange identity as a federated credential (no secret). Null: no fragment.
   EOT
   type = object({
-    # CP tenant that issues the token.
+    # CP tenant that issues the token. Each API maps its own consumers to CP-access apps.
     tenant_id = string
-    # External consumer client ID (the token's azp) => that consumer's CP-access app client ID.
-    # Shared by every API that includes the fragment.
-    client_map = optional(map(string), {})
     # The CP token is cached until this many seconds before it expires.
     cache_buffer_seconds = optional(number, 300)
   })
   default = null
 
   validation {
-    condition = var.cp_token_exchange == null || alltrue(concat(
-      [can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", try(var.cp_token_exchange.tenant_id, "")))],
-      [for k, v in try(var.cp_token_exchange.client_map, {}) : can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", k)) && can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", v))]
-    ))
-    error_message = "cp_token_exchange tenant_id and every client_map key and value must be lower-case GUIDs."
+    condition     = var.cp_token_exchange == null || can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", try(var.cp_token_exchange.tenant_id, "")))
+    error_message = "cp_token_exchange.tenant_id must be a lower-case GUID."
   }
 }
 

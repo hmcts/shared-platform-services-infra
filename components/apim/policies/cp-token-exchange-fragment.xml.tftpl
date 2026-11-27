@@ -7,13 +7,15 @@
         Include it in an API's inbound policy after validate-jwt:
 
             <set-variable name="cpAudience" value="<CP publisher app client ID>" />
+            <set-variable name="cpAppId" value="<consumer's CP-access app client ID>" />   (from the API's client map)
             <set-variable name="cpRejectUnmapped" value="@(true)" />   (optional, default false)
             <include-fragment fragment-id="cp-token-exchange" />
 
         cpAudience     The CP API's publisher app; the token is requested for "<cpAudience>/.default".
+        cpAppId        The calling consumer's CP-access app. Each API maps its own consumers (azp => app).
         cpRejectUnmapped
-                       true: a consumer missing from the client map gets 403. false: its request is
-                       forwarded unchanged, with the external token.
+                       true: a consumer with no cpAppId gets 403. false: its request is forwarded
+                       unchanged, with the external token.
     -->
     <choose>
         <when condition="@(string.IsNullOrEmpty(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;cpAudience&quot;, &quot;&quot;)))">
@@ -32,17 +34,8 @@
         var jwt = auth.StartsWith(&quot;Bearer &quot;) ? auth.Substring(7).AsJwt() : null;
         return jwt == null ? &quot;&quot; : jwt.Claims.GetValueOrDefault(&quot;azp&quot;, &quot;&quot;);
     }" />
-    <set-variable name="cpAppId" value="" />
-%{ if length(client_map) > 0 ~}
-    <!-- External consumer client ID (azp) => that consumer's CP-access app client ID. -->
-    <choose>
-%{ for ext_client_id, cp_app_id in client_map ~}
-        <when condition="@((string)context.Variables[&quot;extAzp&quot;] == &quot;${ext_client_id}&quot;)">
-            <set-variable name="cpAppId" value="${cp_app_id}" />
-        </when>
-%{ endfor ~}
-    </choose>
-%{ endif ~}
+    <!-- The calling API maps the consumer to its CP-access app; empty when the consumer is not mapped. -->
+    <set-variable name="cpAppId" value="@(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;cpAppId&quot;, &quot;&quot;))" />
     <choose>
         <when condition="@(string.IsNullOrEmpty((string)context.Variables[&quot;cpAppId&quot;]) &amp;&amp; context.Variables.GetValueOrDefault&lt;bool&gt;(&quot;cpRejectUnmapped&quot;, false))">
             <return-response>
