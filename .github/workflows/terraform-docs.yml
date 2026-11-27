@@ -60,7 +60,7 @@ jobs:
           mv README.md.tmp README.md
 
       - name: Commit and push doc changes back to the PR branch
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "docs: auto-generate terraform-docs [skip ci]"
           file_pattern: "README.md"
