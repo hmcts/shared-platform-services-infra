@@ -251,24 +251,18 @@ variable "apim_token_exchange_identity_enabled" {
   default     = false
 }
 
-variable "cp_token_exchange" {
+variable "token_exchange" {
   description = <<-EOT
-    Creates the cp-token-exchange policy fragment, which API policies include to swap a consumer's
-    external token for a CP token. APIM signs in to the CP tenant as the consumer's CP-access app,
-    using the token exchange identity as a federated credential (no secret). Null: no fragment.
+    Creates the token-exchange policy fragment, which API policies include to swap a consumer's external
+    token for a token from the backend's tenant. APIM signs in as the consumer's backend-access app, using
+    the token exchange identity as a federated credential (no secret). Each API passes the tenant, audience
+    and its own consumer map. Null: no fragment.
   EOT
   type = object({
-    # CP tenant that issues the token. Each API maps its own consumers to CP-access apps.
-    tenant_id = string
-    # The CP token is cached until this many seconds before it expires.
+    # The backend token is cached until this many seconds before it expires.
     cache_buffer_seconds = optional(number, 300)
   })
   default = null
-
-  validation {
-    condition     = var.cp_token_exchange == null || can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", try(var.cp_token_exchange.tenant_id, "")))
-    error_message = "cp_token_exchange.tenant_id must be a lower-case GUID."
-  }
 }
 
 variable "global_policy_enabled" {
