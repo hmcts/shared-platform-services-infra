@@ -13,6 +13,15 @@ apim_subscription_managers = {
 # User-assigned identity on sps-api-mgmt-sbox for token exchange (API Marketplace token translation POC).
 apim_token_exchange_identity_enabled = true
 
+# Shared CP token exchange fragment (cp-token-exchange), included by API policies on sps-api-mgmt-sbox.
+cp_token_exchange = {
+  tenant_id = "e2995d11-9947-4e78-9de6-d44e0603518e" # CP nonlive (mdv)
+  # "<external consumer client ID>" = "<CP-access app client ID>". One entry per consumer, for every API.
+  client_map = {
+    "378a2954-c99b-4f8d-a35b-e0e70ecd3ea5" = "6e2b811a-29f0-40a3-9af8-2ad42c62d0cd" # amp-test-external-client => amp-cpaccess-consumer-poc-sbox
+  }
+}
+
 ssl_policy = {
   policy_type          = "Predefined"
   policy_name          = "AppGwSslPolicy20220101S"
