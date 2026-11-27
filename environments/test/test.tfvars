@@ -49,3 +49,14 @@ apim_diagnostic_settings = {
   backend_request_body_bytes   = 8192
   backend_response_body_bytes  = 8192
 }
+
+cpp_private_link_endpoints = {
+  "nft-dmzwaf" = {
+    pls_alias       = "pls-nft-dmzwaf-01.45a4a702-5cea-451f-98aa-d6b141f09df6.uksouth.azure.privatelinkservice"
+    request_message = "SPS Preview (Dev) CPP Access to NFT WAF"
+  }
+}
+
+debug_vm = {
+  enabled = true
+}
